@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BalanceElement } from './balance-element'
 import { BalanceService } from './balance-service.service';
-import { SVG, Svg, G } from '@svgdotjs/svg.js'
+import { SVG, Svg, G, Rect } from '@svgdotjs/svg.js'
 
 @Component({
   selector: 'app-balance',
@@ -27,13 +27,14 @@ export class BalanceComponent implements OnInit {
         .addTo('body')
         .size(width, height);
 
-      // Create a group and add 5 lines
+      canvas.nested().size(width / 2, height / 2).fill('blue');
+
       const privateSectorBSGroup = canvas.group()
         .attr({
           id: 'privateSectorBSGroup'
         });
 
-      privateSectorBSGroup.rect(540, 320).attr({
+      let wrapper = privateSectorBSGroup.rect(540, 320).attr({
         id: 'priBgRect',
         x: 375,
         y: 270,
@@ -57,7 +58,7 @@ export class BalanceComponent implements OnInit {
         style: 'font-size: 9px; font-weight: bold; text-anchor: middle; font-family: arial,sans-serif;'
       });
 
-      this.fillGroup(baseElements, bankBSGroup);
+      this.fillGroup(baseElements, bankBSGroup, wrapper);
 
 
     });
@@ -65,10 +66,10 @@ export class BalanceComponent implements OnInit {
 
   }
 
-  fillGroup(balanceElements: BalanceElement[], group: G) {
+  fillGroup(balanceElements: BalanceElement[], group: G, wrapper: Rect) {
     let element = balanceElements[0];
     //group lower line
-    group.line(375, 571, 545, 571).attr({
+    group.line(wrapper.x(), wrapper.y(), 545, 571).attr({//group.line(375, 571, 545, 571).attr({
       style: 'stroke:rgb(99,99,99);stroke-width:2'
     });
     //group label

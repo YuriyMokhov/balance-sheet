@@ -27,38 +27,52 @@ export class BalanceComponent implements OnInit {
         .addTo('body')
         .size(width, height);
 
-      canvas.nested().size(width / 2, height / 2).fill('blue');
+      let privateSectorBSNested = canvas.nested();
+      privateSectorBSNested.attr({
+        fill: 'blue',
+        width: 300,
+        height: 300,
+        stroke: 'red'
+      });
 
-      const privateSectorBSGroup = canvas.group()
-        .attr({
-          id: 'privateSectorBSGroup'
-        });
-
-      let wrapper = privateSectorBSGroup.rect(540, 320).attr({
+      privateSectorBSNested.rect(100, 100).attr({
         id: 'priBgRect',
-        x: 375,
-        y: 270,
-        fill: 'white',
-        stroke: '#000',
+        x: 50,
+        y: 50,
+        fill: 'silver',
+        stroke: 'red',
       });
 
-      //<text x="920" y="285" id="priScaleLabel" style="font-size: 12px; font-style: italic; font-family: arial,sans-serif; fill: black;">Scale: 1/1</text>
-      privateSectorBSGroup
-        .text('Целые сектора')
-        .attr({
-          id: 'priScaleLabel',
-          x: 920,
-          y: 285,
-          style: 'font-size: 12px; font-style: italic; font-family: arial,sans-serif; fill: black;'
-        });
+      // const privateSectorBSGroup = canvas.group()
+      //   .attr({
+      //     id: 'privateSectorBSGroup'
+      //   });
+
+      // let wrapper = privateSectorBSGroup.rect(540, 320).attr({
+      //   id: 'priBgRect',
+      //   x: 375,
+      //   y: 270,
+      //   fill: 'white',
+      //   stroke: '#000', 
+      // });
+
+      // //<text x="920" y="285" id="priScaleLabel" style="font-size: 12px; font-style: italic; font-family: arial,sans-serif; fill: black;">Scale: 1/1</text>
+      // privateSectorBSGroup
+      //   .text('Целые сектора')
+      //   .attr({
+      //     id: 'priScaleLabel',
+      //     x: 920,
+      //     y: 285,
+      //     style: 'font-size: 12px; font-style: italic; font-family: arial,sans-serif; fill: black;'
+      //   });
 
 
-      let bankBSGroup = privateSectorBSGroup.group().attr({
-        id: 'bankBS',
-        style: 'font-size: 9px; font-weight: bold; text-anchor: middle; font-family: arial,sans-serif;'
-      });
+      // let bankBSGroup = privateSectorBSGroup.group().attr({
+      //   id: 'bankBS',
+      //   style: 'font-size: 9px; font-weight: bold; text-anchor: middle; font-family: arial,sans-serif;'
+      // });
 
-      this.fillGroup(baseElements, bankBSGroup, wrapper);
+      // this.fillGroup(baseElements, bankBSGroup, wrapper);
 
 
     });

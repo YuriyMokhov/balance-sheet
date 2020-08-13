@@ -1,0 +1,59 @@
+[
+    {
+        "name": "Banks",
+        "assets": [
+            {
+                "name": "Currancy",
+                "value": 40
+            },
+            {
+                "name": "Reserves",
+                "value": 80
+            }
+        ],
+        "liabilities": [
+            {
+                "name": "Equity",
+                "value": 40
+            },
+            {
+                "name": "Deposits",
+                "value": 80
+            }
+        ]
+    },
+    {
+        "name": "Households",
+        "assets": [
+            {
+                "name": "Deposits",
+                "value": 40
+            },
+            {
+                "name": "Treasuries",
+                "value": 40
+            }
+        ],
+        "liabilities": [
+            {
+                "name": "Equity",
+                "value": 80
+            }
+        ]
+    },
+    {
+        "name": "Companies",
+        "assets": [
+            {
+                "name": "Deposits",
+                "value": 40
+            }
+        ],
+        "liabilities": [
+            {
+                "name": "Equity",
+                "value": 40
+            }
+        ]
+    }
+]

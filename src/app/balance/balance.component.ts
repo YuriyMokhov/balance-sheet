@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BalanceElement } from './balance-element'
+import { BalanceElement, BalanceElementAsset } from './balance-element'
 import { BalanceService } from './balance-service.service';
 import { SVG, Svg, G, Rect } from '@svgdotjs/svg.js'
 
@@ -14,6 +14,13 @@ export class BalanceComponent implements OnInit {
 
   constructor(balanceService: BalanceService) {
     this.balanceService = balanceService;
+
+    // let Treasury : BalanceElement = { 
+    //   name: 'Treasury (Federal Government)',
+    //   assets: new Array<BalanceElementAsset>({
+
+    //   })
+    // }
   }
 
   ngOnInit(): void {

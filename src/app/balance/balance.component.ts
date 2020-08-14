@@ -164,7 +164,7 @@ export class BalanceComponent implements OnInit {
         y: sumPrevElementValues + indentTextHeight
       });
       //<text style="fill: white;" x="500" y="460" visibility="true">Equity $40</text>
-      nestedSvg.text(`${asset.name} ${asset.value}`).attr({
+      nestedSvg.text(`${asset.name} $${asset.value}`).attr({
         x: widthColumnMargin + columnWidth / 2,
         y: sumPrevElementValues + indentTextHeight,
         fill: 'white',
@@ -189,7 +189,7 @@ export class BalanceComponent implements OnInit {
         y: sumPrevElementValues + indentTextHeight
       });
       //<text style="fill: white;" x="500" y="460" visibility="true">Equity $40</text>
-      nestedSvg.text(`${liability.name} ${liability.value}`).attr({
+      nestedSvg.text(`${liability.name} $${liability.value}`).attr({
         x: widthColumnMargin + columnWidth + widthBetweenColumns + columnWidth / 2,
         y: sumPrevElementValues + indentTextHeight,
         fill: 'white',

@@ -41,7 +41,7 @@ export class BalanceElements {
         }
         this.Banks = {
             name: 'Banks',
-            assets: [{ name: 'Currancy', value: 40 }, { name: 'Reserves', value: 80 }],
+            assets: [{ name: 'Currency', value: 40 }, { name: 'Reserves', value: 80 }],
             liabilities: [
                 {
                     name: 'Equity',
@@ -54,7 +54,7 @@ export class BalanceElements {
         }
         this.Households = {
             name: 'Households',
-            assets: [{ name: 'Currancy', value: 0 }, { name: 'Deposits', value: 40 }, { name: 'Treasuries', value: 40 }],
+            assets: [{ name: 'Currency', value: 0 }, { name: 'Deposits', value: 40 }, { name: 'Treasuries', value: 40 }],
             liabilities: [
                 {
                     name: 'Equity',
@@ -70,8 +70,8 @@ export class BalanceElements {
         //////////////////////////
         this.Treasury.assets.find(x => x.name == 'Neg.Equity').value =
             this.CentralBank.liabilities.find(x => x.name == 'Equity').value
-            + this.Banks.assets.find(x => x.name == 'Currancy').value
-            + this.Households.assets.find(x => x.name == 'Currancy').value
+            + this.Banks.assets.find(x => x.name == 'Currency').value
+            + this.Households.assets.find(x => x.name == 'Currency').value
             + this.Banks.assets.find(x => x.name == 'Reserves').value
             + this.Households.assets.find(x => x.name == 'Treasuries').value;
         console.log(`Neg.Equity Treasury: ${this.Treasury.assets.find(x => x.name == 'Neg.Equity').value}`);
@@ -83,8 +83,8 @@ export class BalanceElements {
 
 
         this.CentralBank.liabilities.find(x => x.name == 'Currency').value =
-            this.Banks.assets.find(x => x.name == 'Currancy').value
-            + this.Households.assets.find(x => x.name == 'Currancy').value;
+            this.Banks.assets.find(x => x.name == 'Currency').value
+            + this.Households.assets.find(x => x.name == 'Currency').value;
         console.log(`Currency CentralBank: ${this.CentralBank.liabilities.find(x => x.name == 'Currency').value}`);
 
         this.CentralBank.liabilities.find(x => x.name == 'Deposits').value =
@@ -94,9 +94,9 @@ export class BalanceElements {
 
         this.CentralBank.assets.find(x => x.name == 'Treasuries').value =
             this.CentralBank.liabilities.find(x => x.name == 'Equity').value
-            + this.CentralBank.liabilities.find(x => x.name == 'Currancy').value
+            + this.CentralBank.liabilities.find(x => x.name == 'Currency').value
             + this.CentralBank.liabilities.find(x => x.name == 'Deposits').value;
-        console.log(`Treasuries CentralBank: ${this.CentralBank.liabilities.find(x => x.name == 'Treasuries').value}`);
+        console.log(`Treasuries CentralBank: ${this.CentralBank.assets.find(x => x.name == 'Treasuries').value}`);
 
         this.Banks.liabilities.find(x => x.name == 'Deposits').value =
             this.Households.assets.find(x => x.name == 'Deposits').value
@@ -104,13 +104,13 @@ export class BalanceElements {
 
         this.Banks.liabilities.find(x => x.name == 'Equity').value =
             this.Banks.assets.find(x => x.name == 'Reserves').value
-            + this.Banks.assets.find(x => x.name == 'Currancy').value
+            + this.Banks.assets.find(x => x.name == 'Currency').value
             - this.Banks.liabilities.find(x => x.name == 'Deposits').value;
 
         this.Households.liabilities.find(x => x.name == 'Equity').value =
             this.Households.assets.find(x => x.name == 'Treasuries').value
             + this.Households.assets.find(x => x.name == 'Deposits').value
-            + this.Households.assets.find(x => x.name == 'Currancy').value;
+            + this.Households.assets.find(x => x.name == 'Currency').value;
 
         this.Companies.liabilities.find(x => x.name == 'Equity').value =
             this.Companies.assets.find(x => x.name == 'Deposits').value;
@@ -122,8 +122,8 @@ export class BalanceElements {
         //         {
         //             name: 'Neg.Equity',
         //             value: this.CentralBank.liabilities.find(x => x.name == 'Equity').value
-        //                 + this.Banks.assets.find(x => x.name == 'Currancy').value
-        //                 + this.Households.assets.find(x => x.name == 'Currancy').value
+        //                 + this.Banks.assets.find(x => x.name == 'Currency').value
+        //                 + this.Households.assets.find(x => x.name == 'Currency').value
         //                 + this.Banks.assets.find(x => x.name == 'Reserves').value
         //                 + this.Households.assets.find(x => x.name == 'Treasuries').value
         //         },
@@ -139,15 +139,15 @@ export class BalanceElements {
         //     assets: [{
         //         name: 'Treasuries',
         //         value: this.CentralBank.liabilities.find(x => x.name == 'Equity').value
-        //             + this.CentralBank.liabilities.find(x => x.name == 'Currancy').value
+        //             + this.CentralBank.liabilities.find(x => x.name == 'Currency').value
         //             + this.CentralBank.liabilities.find(x => x.name == 'Deposits').value
         //     }],
         //     liabilities: [
         //         { name: 'Equity', value: 10 },
         //         {
         //             name: 'Currency',
-        //             value: this.Banks.assets.find(x => x.name == 'Currancy').value
-        //                 + this.Households.assets.find(x => x.name == 'Currancy').value
+        //             value: this.Banks.assets.find(x => x.name == 'Currency').value
+        //                 + this.Households.assets.find(x => x.name == 'Currency').value
         //         }, {
         //             name: 'Deposits',
         //             value: this.Treasury.assets.find(x => x.name == 'T.Deposits').value
@@ -156,12 +156,12 @@ export class BalanceElements {
         // }
         // this.Banks = {
         //     name: 'Banks',
-        //     assets: [{ name: 'Currancy', value: 40 }, { name: 'Reserves', value: 80 }],
+        //     assets: [{ name: 'Currency', value: 40 }, { name: 'Reserves', value: 80 }],
         //     liabilities: [
         //         {
         //             name: 'Equity',
         //             value: this.Banks.assets.find(x => x.name == 'Reserves').value
-        //                 + this.Banks.assets.find(x => x.name == 'Currancy').value
+        //                 + this.Banks.assets.find(x => x.name == 'Currency').value
         //                 - this.Banks.liabilities.find(x => x.name == 'Deposits').value
         //         },
         //         {
@@ -172,13 +172,13 @@ export class BalanceElements {
         // }
         // this.Households = {
         //     name: 'Households',
-        //     assets: [{ name: 'Currancy', value: 0 }, { name: 'Deposits', value: 40 }, { name: 'Treasuries', value: 40 }],
+        //     assets: [{ name: 'Currency', value: 0 }, { name: 'Deposits', value: 40 }, { name: 'Treasuries', value: 40 }],
         //     liabilities: [
         //         {
         //             name: 'Equity',
         //             value: this.Households.assets.find(x => x.name == 'Treasuries').value
         //                 + this.Households.assets.find(x => x.name == 'Deposits').value
-        //                 + this.Households.assets.find(x => x.name == 'Currancy').value
+        //                 + this.Households.assets.find(x => x.name == 'Currency').value
         //         }]
         // }
         // this.Companies = {

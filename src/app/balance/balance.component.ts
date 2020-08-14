@@ -71,15 +71,21 @@ export class BalanceComponent implements OnInit {
 
   fillBalanceElement(balanceElement: BalanceElement, parentSvg: Svg, countColumns: number) {
 
-    let svgHeight = 0; //Nested svg height for BalanceElement. Need calculate
-    let svgWidth = parentSvg.width() / countColumns; //Nested svg width for BalanceElement.
+    //--------params----------
 
-    balanceElement.assets.forEach((asset) => { //Calculate svg height from the asset's values
-      svgHeight += asset.value;
-    });
-    const topTextHeight = 20; //indent for top text 
-    const bottomTextHeight = 20;//indent for bottom text 
-    svgHeight = topTextHeight + svgHeight + bottomTextHeight; //total height
+    let svgWidth = parentSvg.width() / countColumns; //Nested svg width for BalanceElement.
+    //Nested svg height for BalanceElement. Need calculate
+    let svgHeight = balanceElement.assets.map(asset => asset.value).reduce((sum, currentAssetValue) => {
+      return sum + currentAssetValue;
+    })
+    let sumAssetsValue = svgHeight; //equal
+
+    const indentTextHeight = 20;//indent for bottom text 
+    svgHeight = 2 * indentTextHeight + svgHeight; //total height
+    const columnWidth = 70;
+    const widthBetweenColumns = 20;
+    const widthColumnMargin = 10;
+    //----------------------
 
     let nestedSvg = parentSvg.nested().attr({
       id: `${balanceElement.name}NestedSvg`,
@@ -96,95 +102,89 @@ export class BalanceComponent implements OnInit {
     });
 
     //bottom line
-    nestedSvg.line(0, svgHeight - bottomTextHeight, svgWidth, svgHeight - bottomTextHeight).attr({
+    nestedSvg.line(0, svgHeight - indentTextHeight, svgWidth, svgHeight - indentTextHeight).attr({
       stroke: 'black',
       'stroke-widht': 2
     });
     //bottom text
     nestedSvg.text('Банки').attr({
       x: svgWidth / 2,
-      y: svgHeight - bottomTextHeight,
+      y: svgHeight - indentTextHeight,
       style: 'fill:black'
     });
 
-
-
-    //group total result
-    nestedSvg.text('$120').attr({
-      x: 460,
-      y: 445
+    //total result
+    nestedSvg.text(`$${sumAssetsValue}`).attr({
+      x: svgWidth / 2,
+      y: 0
     });
+
     //Assets text
     nestedSvg.text('Assets').attr({
-      x: 420,
-      y: 445,
+      x: widthColumnMargin + columnWidth / 2,
+      y: 0,
       fill: '#606060',
       'font-style': 'italic'
     });
     // Liabilities text
     nestedSvg.text('Liabilities').attr({
-      x: 500,
-      y: 445,
+      x: widthColumnMargin + columnWidth + widthBetweenColumns + columnWidth / 2,
+      y: 0,
       fill: '#606060',
       'font-style': 'italic'
     });
-    //<rect width="70" height="40" stroke="black" stroke-width="1" fill="mediumblue" x="465" y="450"></rect>
-    nestedSvg.rect(70, 40).attr({
-      stroke: 'black',
-      'stroke-width': 1,
-      fill: 'mediumblue',
-      x: 465,
-      y: 450
+
+    //fill assets
+    let columnColors = ['red', 'blue', 'green'];
+    balanceElement.assets.forEach((asset, index, balanceElements) => {
+      let sumPrevElementValues = balanceElements.filter((value, i) => i < index).length ?
+        balanceElements.filter((value, i) => i < index).map(x => x.value).reduce((sum, currentValue) => sum + currentValue) : 0;
+
+
+      console.log(`index ${index}: ${sumPrevElementValues}`);
+      //<rect width="70" height="40" stroke="black" stroke-width="1" fill="mediumblue" x="465" y="450"></rect>
+      nestedSvg.rect(columnWidth, asset.value).attr({
+        stroke: 'black',
+        'stroke-width': 1,
+        fill: columnColors[index],
+        x: widthColumnMargin,
+        y: sumPrevElementValues + indentTextHeight
+      });
+      //<text style="fill: white;" x="500" y="460" visibility="true">Equity $40</text>
+      nestedSvg.text(`${asset.name} ${asset.value}`).attr({
+        x: widthColumnMargin + columnWidth / 2,
+        y: sumPrevElementValues + indentTextHeight,
+        fill: 'white',
+        visibility: true
+      });
+
     });
-    //<text style="fill: white;" x="500" y="460" visibility="true">Equity $40</text>
-    nestedSvg.text('Equity $40').attr({
-      x: 500,
-      y: 460,
-      fill: 'white',
-      visibility: true
+
+    //fill liabilities
+    balanceElement.liabilities.forEach((liability, index, balanceElements) => {
+      let sumPrevElementValues = balanceElements.filter((value, i) => i < index).length ?
+        balanceElements.filter((value, i) => i < index).map(x => x.value).reduce((sum, currentValue) => sum + currentValue) : 0;
+
+
+      console.log(`index ${index}: ${sumPrevElementValues}`);
+      //<rect width="70" height="40" stroke="black" stroke-width="1" fill="mediumblue" x="465" y="450"></rect>
+      nestedSvg.rect(columnWidth, liability.value).attr({
+        stroke: 'black',
+        'stroke-width': 1,
+        fill: columnColors[index],
+        x: widthColumnMargin + columnWidth + widthBetweenColumns,
+        y: sumPrevElementValues + indentTextHeight
+      });
+      //<text style="fill: white;" x="500" y="460" visibility="true">Equity $40</text>
+      nestedSvg.text(`${liability.name} ${liability.value}`).attr({
+        x: widthColumnMargin + columnWidth + widthBetweenColumns + columnWidth / 2,
+        y: sumPrevElementValues + indentTextHeight,
+        fill: 'white',
+        visibility: true
+      });
+
     });
-    //<rect width="70" height="40" stroke="black" stroke-width="1" fill="darkgreen" x="385" y="450"></rect>
-    nestedSvg.rect(70, 40).attr({
-      stroke: 'black',
-      'stroke-width': 1,
-      fill: 'darkgreen',
-      x: 385,
-      y: 450
-    });
-    //<text style="fill: white;" x="420" y="460">Currency $40</text>
-    nestedSvg.text('Currency $40').attr({
-      x: 420,
-      y: 460,
-      fill: 'white'
-    });
-    //<rect width="70" height="80" stroke="black" stroke-width="1" fill="darkgreen" x="385" y="490"></rect>
-    nestedSvg.rect(70, 80).attr({
-      stroke: 'black',
-      'stroke-width': 1,
-      fill: 'darkgreen',
-      x: 385,
-      y: 490
-    });
-    //<text style="fill: white;" x="420" y="500">Reserves $80</text>
-    nestedSvg.text('Reserves $80').attr({
-      x: 420,
-      y: 500,
-      fill: 'white'
-    });
-    //<rect width="70" height="80" stroke="black" stroke-width="1" fill="darkred" x="465" y="490"></rect>
-    nestedSvg.rect(70, 80).attr({
-      stroke: 'black',
-      'stroke-width': 1,
-      fill: 'darkred',
-      x: 465,
-      y: 490
-    });
-    //<text style="fill:white" x="500" y="500">Deposits $80</text>
-    nestedSvg.text('Deposits $80').attr({
-      x: 500,
-      y: 500,
-      fill: 'white'
-    });
+
 
   }
 

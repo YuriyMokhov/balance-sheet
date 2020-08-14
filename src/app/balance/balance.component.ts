@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { BalanceElement, BalanceElementAsset } from './balance-element'
+import { BalanceElement, BalanceElementAsset, BalanceElementLiabilities } from './balance-element'
 import { BalanceService } from './balance-service.service';
 import { SVG, Svg, G, Rect } from '@svgdotjs/svg.js'
+import { BalanceElements } from './balance-elements';
 
 @Component({
   selector: 'app-balance',
@@ -9,82 +10,75 @@ import { SVG, Svg, G, Rect } from '@svgdotjs/svg.js'
   styleUrls: ['./balance.component.scss']
 })
 export class BalanceComponent implements OnInit {
-  private balanceService: BalanceService;
+  //private balanceService: BalanceService;
   private graph: Svg;
+  //base elements
+  private balanceElements: BalanceElements;
 
-  constructor(balanceService: BalanceService) {
-    this.balanceService = balanceService;
 
-    // let Treasury : BalanceElement = { 
-    //   name: 'Treasury (Federal Government)',
-    //   assets: new Array<BalanceElementAsset>({
+  constructor() {
+    this.balanceElements = new BalanceElements();
 
-    //   })
-    // }
   }
 
   ngOnInit(): void {
-    // this.graph = SVG().addTo('app-balance #graph-wrapper').size('100%', '100%');
-
-    this.balanceService.getData().subscribe(baseElements => {
-      const width = window.innerWidth - 10
-      const height = window.innerHeight - 10
-
-      let canvas = SVG()
-        .addTo('body')
-        .size(width, height);
-
-      const convasSettings = {
-        privateSectorBSNestedWidth: 540,
-        privateSectorBSNestedHeight: 320,
-        governmentSectorBSNestedWidth: 355,
-        governmentSectorBSNestedHeight: 320
-      };
-
-      //Federal Government sector
-      let governmentSectorBSNested = canvas.nested();
-      governmentSectorBSNested.attr({
-        id: 'governmentSectorBSNested',
-        width: convasSettings.governmentSectorBSNestedWidth,
-        height: convasSettings.governmentSectorBSNestedHeight,
-        x: 0,
-        y: 0 //пока что
-      });
-      governmentSectorBSNested.rect(convasSettings.governmentSectorBSNestedWidth, convasSettings.governmentSectorBSNestedHeight).attr({
-        id: 'governmentSectorBSNestedRect',
-        x: 0,
-        y: 0,
-        fill: 'white',
-        stroke: '#000',
-      });
-      baseElements[0].forEach((baseElement, index) => {
-        this.fillBalanceElement(baseElement, governmentSectorBSNested, 2, index);
-      });
-
-      //Private Sector
-      let privateSectorBSNested = canvas.nested();
-      privateSectorBSNested.attr({
-        id: 'privateSectorBSNested',
-        width: convasSettings.privateSectorBSNestedWidth,
-        height: convasSettings.privateSectorBSNestedHeight,
-        x: convasSettings.governmentSectorBSNestedWidth,
-        y: 0 //пока что
-      });
-      privateSectorBSNested.rect(convasSettings.privateSectorBSNestedWidth, convasSettings.privateSectorBSNestedHeight).attr({
-        id: 'privateSectorBSNestedRect',
-        x: 0,
-        y: 0,
-        fill: 'white',
-        stroke: '#000',
-      });
-      baseElements[1].forEach((baseElement, index) => {
-        this.fillBalanceElement(baseElement, privateSectorBSNested, 3, index);
-      });
 
 
+    const width = window.innerWidth - 10
+    const height = window.innerHeight - 10
 
+    let canvas = SVG()
+      .addTo('body')
+      .size(width, height);
+
+    const convasSettings = {
+      privateSectorBSNestedWidth: 540,
+      privateSectorBSNestedHeight: 320,
+      governmentSectorBSNestedWidth: 355,
+      governmentSectorBSNestedHeight: 320
+    };
+
+    //Federal Government sector
+    let governmentSectorBSNested = canvas.nested();
+    governmentSectorBSNested.attr({
+      id: 'governmentSectorBSNested',
+      width: convasSettings.governmentSectorBSNestedWidth,
+      height: convasSettings.governmentSectorBSNestedHeight,
+      x: 0,
+      y: 0 //пока что
+    });
+    governmentSectorBSNested.rect(convasSettings.governmentSectorBSNestedWidth, convasSettings.governmentSectorBSNestedHeight).attr({
+      id: 'governmentSectorBSNestedRect',
+      x: 0,
+      y: 0,
+      fill: 'white',
+      stroke: '#000',
+    });
+    [this.balanceElements.Treasury, this.balanceElements.CentralBank].forEach((balanceElement, index) => {
+      this.fillBalanceElement(balanceElement, governmentSectorBSNested, 2, index);
     });
 
+    //Private Sector
+    let privateSectorBSNested = canvas.nested();
+    privateSectorBSNested.attr({
+      id: 'privateSectorBSNested',
+      width: convasSettings.privateSectorBSNestedWidth,
+      height: convasSettings.privateSectorBSNestedHeight,
+      x: convasSettings.governmentSectorBSNestedWidth,
+      y: 0 //пока что
+    });
+    privateSectorBSNested.rect(convasSettings.privateSectorBSNestedWidth, convasSettings.privateSectorBSNestedHeight).attr({
+      id: 'privateSectorBSNestedRect',
+      x: 0,
+      y: 0,
+      fill: 'white',
+      stroke: '#000',
+    });
+
+    [this.balanceElements.Banks, this.balanceElements.Households, this.balanceElements.Companies]
+      .forEach((balanceElement, index) => {
+        this.fillBalanceElement(balanceElement, privateSectorBSNested, 3, index);
+      });
 
   }
 

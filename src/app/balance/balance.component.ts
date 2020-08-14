@@ -39,7 +39,9 @@ export class BalanceComponent implements OnInit {
       governmentSectorBSNested.attr({
         id: 'governmentSectorBSNested',
         width: convasSettings.governmentSectorBSNestedWidth,
-        height: convasSettings.governmentSectorBSNestedHeight
+        height: convasSettings.governmentSectorBSNestedHeight,
+        x: 0,
+        y: 0 //пока что
       });
       governmentSectorBSNested.rect(convasSettings.governmentSectorBSNestedWidth, convasSettings.governmentSectorBSNestedHeight).attr({
         id: 'governmentSectorBSNestedRect',
@@ -48,8 +50,8 @@ export class BalanceComponent implements OnInit {
         fill: 'white',
         stroke: '#000',
       });
-      baseElements.forEach((baseElement, index) => {
-        this.fillBalanceElement(baseElement, privateSectorBSNested, 2, index);
+      baseElements[0].forEach((baseElement, index) => {
+        this.fillBalanceElement(baseElement, governmentSectorBSNested, 2, index);
       });
 
       //Private Sector
@@ -57,16 +59,18 @@ export class BalanceComponent implements OnInit {
       privateSectorBSNested.attr({
         id: 'privateSectorBSNested',
         width: convasSettings.privateSectorBSNestedWidth,
-        height: convasSettings.privateSectorBSNestedHeight
+        height: convasSettings.privateSectorBSNestedHeight,
+        x: convasSettings.governmentSectorBSNestedWidth,
+        y: 0 //пока что
       });
       privateSectorBSNested.rect(convasSettings.privateSectorBSNestedWidth, convasSettings.privateSectorBSNestedHeight).attr({
         id: 'privateSectorBSNestedRect',
-        x: convasSettings.governmentSectorBSNestedWidth,
+        x: 0,
         y: 0,
         fill: 'white',
         stroke: '#000',
       });
-      baseElements.forEach((baseElement, index) => {
+      baseElements[1].forEach((baseElement, index) => {
         this.fillBalanceElement(baseElement, privateSectorBSNested, 3, index);
       });
 

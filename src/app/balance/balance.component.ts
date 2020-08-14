@@ -30,10 +30,29 @@ export class BalanceComponent implements OnInit {
       const convasSettings = {
         privateSectorBSNestedWidth: 540,
         privateSectorBSNestedHeight: 320,
-        balanceElementNestedWidth: 170,
-        // balanceElementNestedHeight: 145
+        governmentSectorBSNestedWidth: 355,
+        governmentSectorBSNestedHeight: 320
       };
 
+      //Federal Government sector
+      let governmentSectorBSNested = canvas.nested();
+      governmentSectorBSNested.attr({
+        id: 'governmentSectorBSNested',
+        width: convasSettings.governmentSectorBSNestedWidth,
+        height: convasSettings.governmentSectorBSNestedHeight
+      });
+      governmentSectorBSNested.rect(convasSettings.governmentSectorBSNestedWidth, convasSettings.governmentSectorBSNestedHeight).attr({
+        id: 'governmentSectorBSNestedRect',
+        x: 0,
+        y: 0,
+        fill: 'white',
+        stroke: '#000',
+      });
+      baseElements.forEach((baseElement, index) => {
+        this.fillBalanceElement(baseElement, privateSectorBSNested, 2, index);
+      });
+
+      //Private Sector
       let privateSectorBSNested = canvas.nested();
       privateSectorBSNested.attr({
         id: 'privateSectorBSNested',
@@ -42,26 +61,15 @@ export class BalanceComponent implements OnInit {
       });
       privateSectorBSNested.rect(convasSettings.privateSectorBSNestedWidth, convasSettings.privateSectorBSNestedHeight).attr({
         id: 'privateSectorBSNestedRect',
-        x: 0,
+        x: convasSettings.governmentSectorBSNestedWidth,
         y: 0,
         fill: 'white',
         stroke: '#000',
       });
+      baseElements.forEach((baseElement, index) => {
+        this.fillBalanceElement(baseElement, privateSectorBSNested, 3, index);
+      });
 
-      //<text x="920" y="285" id="priScaleLabel" style="font-size: 12px; font-style: italic; font-family: arial,sans-serif; fill: black;">Scale: 1/1</text>
-      // privateSectorBSNested
-      //   .text('Целые сектора')
-      //   .attr({
-      //     id: 'priScaleLabel',
-      //     x: 0,
-      //     y: 0,
-      //     style: 'font-size: 12px; font-style: italic; font-family: arial,sans-serif; fill: black;'
-      //   });
-
-
-
-
-      this.fillBalanceElement(baseElements[0], privateSectorBSNested, 3);
 
 
     });
@@ -69,7 +77,7 @@ export class BalanceComponent implements OnInit {
 
   }
 
-  fillBalanceElement(balanceElement: BalanceElement, parentSvg: Svg, countColumns: number) {
+  fillBalanceElement(balanceElement: BalanceElement, parentSvg: Svg, countColumns: number, indexOfElements: number) {
 
     //--------params----------
 
@@ -92,7 +100,7 @@ export class BalanceComponent implements OnInit {
       style: 'font-size: 9px; font-weight: bold; text-anchor: middle; font-family: arial,sans-serif;',
       width: svgWidth,
       height: svgHeight,
-      x: 0,
+      x: svgWidth * indexOfElements,
       y: parentSvg.height() - svgHeight
     });
     nestedSvg.rect(nestedSvg.width(), nestedSvg.height()).attr({
@@ -107,7 +115,7 @@ export class BalanceComponent implements OnInit {
       'stroke-widht': 2
     });
     //bottom text
-    nestedSvg.text('Банки').attr({
+    nestedSvg.text(`${balanceElement.name}`).attr({
       x: svgWidth / 2,
       y: svgHeight - indentTextHeight,
       style: 'fill:black'

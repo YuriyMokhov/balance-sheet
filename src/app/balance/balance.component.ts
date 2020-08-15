@@ -35,7 +35,8 @@ export class BalanceComponent implements OnInit {
       privateSectorBSNestedWidth: 540,
       privateSectorBSNestedHeight: 320,
       governmentSectorBSNestedWidth: 355,
-      governmentSectorBSNestedHeight: 320
+      governmentSectorBSNestedHeight: 320,
+      indentBetweenSectors: 20
     };
 
     //Federal Government sector
@@ -44,7 +45,7 @@ export class BalanceComponent implements OnInit {
       id: 'governmentSectorBSNested',
       width: convasSettings.governmentSectorBSNestedWidth,
       height: convasSettings.governmentSectorBSNestedHeight,
-      x: 0,
+      x: convasSettings.indentBetweenSectors,
       y: 0 //пока что
     });
     governmentSectorBSNested.rect(convasSettings.governmentSectorBSNestedWidth, convasSettings.governmentSectorBSNestedHeight).attr({
@@ -52,7 +53,7 @@ export class BalanceComponent implements OnInit {
       x: 0,
       y: 0,
       fill: 'white',
-      stroke: '#000',
+      // stroke: '#000',
     });
     [this.balanceElements.Treasury, this.balanceElements.CentralBank].forEach((balanceElement, index) => {
       this.fillBalanceElement(balanceElement, governmentSectorBSNested, 2, index);
@@ -64,7 +65,7 @@ export class BalanceComponent implements OnInit {
       id: 'privateSectorBSNested',
       width: convasSettings.privateSectorBSNestedWidth,
       height: convasSettings.privateSectorBSNestedHeight,
-      x: convasSettings.governmentSectorBSNestedWidth,
+      x: convasSettings.indentBetweenSectors + convasSettings.governmentSectorBSNestedWidth + convasSettings.indentBetweenSectors,
       y: 0 //пока что
     });
     privateSectorBSNested.rect(convasSettings.privateSectorBSNestedWidth, convasSettings.privateSectorBSNestedHeight).attr({
@@ -72,7 +73,7 @@ export class BalanceComponent implements OnInit {
       x: 0,
       y: 0,
       fill: 'white',
-      stroke: '#000',
+      // stroke: '#000',
     });
 
     [this.balanceElements.Banks, this.balanceElements.Households, this.balanceElements.Companies]
@@ -110,7 +111,7 @@ export class BalanceComponent implements OnInit {
     });
     nestedSvg.rect(nestedSvg.width(), nestedSvg.height()).attr({
       id: `${balanceElement.name}NestedSvgRect`,
-      stroke: 'black',
+      //  stroke: 'black',
       fill: 'white'
     });
 
@@ -148,7 +149,6 @@ export class BalanceComponent implements OnInit {
     });
 
     //fill assets
-    let columnColors = ['red', 'blue', 'green'];
     balanceElement.assets.forEach((asset, index, balanceElements) => {
       let sumPrevElementValues = balanceElements.filter((value, i) => i < index).length ?
         balanceElements.filter((value, i) => i < index).map(x => x.value).reduce((sum, currentValue) => sum + currentValue) : 0;
@@ -159,7 +159,7 @@ export class BalanceComponent implements OnInit {
       nestedSvg.rect(columnWidth, asset.value).attr({
         stroke: 'black',
         'stroke-width': 1,
-        fill: columnColors[index],
+        fill: asset.color,
         x: widthColumnMargin,
         y: sumPrevElementValues + indentTextHeight
       });
@@ -184,7 +184,7 @@ export class BalanceComponent implements OnInit {
       nestedSvg.rect(columnWidth, liability.value).attr({
         stroke: 'black',
         'stroke-width': 1,
-        fill: columnColors[index],
+        fill: liability.color,
         x: widthColumnMargin + columnWidth + widthBetweenColumns,
         y: sumPrevElementValues + indentTextHeight
       });

@@ -12,59 +12,70 @@ export class BalanceElements {
 
         this.Treasury = {
             name: 'Treasury (Federal Government)',
+
             assets: [
                 {
                     name: 'Neg.Equity',
-                    value: null
+                    value: null,
+                    color: 'mediumblue'
                 },
-                { name: 'T.Deposits', value: 40 }],
+                { name: 'T.Deposits', value: 40, color: 'darkgreen' }],
             liabilities: [{
                 name: 'Treasuries',
-                value: null
+                value: null,
+                color: 'darkred'
             }]
         }
         this.CentralBank = {
             name: 'Central Bank (Federal Government)',
             assets: [{
                 name: 'Treasuries',
-                value: null
+                value: null,
+                color: 'darkgreen'
             }],
             liabilities: [
-                { name: 'Equity', value: 10 },
+                { name: 'Equity', value: 10, color: 'mediumblue' },
                 {
                     name: 'Currency',
-                    value: null
+                    value: null,
+                    color: 'darkred'
                 }, {
                     name: 'Deposits',
-                    value: null
+                    value: null,
+                    color: 'darkred'
                 }]
         }
         this.Banks = {
             name: 'Banks',
-            assets: [{ name: 'Currency', value: 40 }, { name: 'Reserves', value: 80 }],
+            assets: [{ name: 'Currency', value: 40, color: 'darkgreen' }, { name: 'Reserves', value: 80, color: 'darkgreen' }],
             liabilities: [
                 {
                     name: 'Equity',
-                    value: null
+                    value: null,
+                    color: 'mediumblue'
                 },
                 {
                     name: 'Deposits',
-                    value: null
+                    value: null,
+                    color: 'darkred'
                 }]
         }
         this.Households = {
             name: 'Households',
-            assets: [{ name: 'Currency', value: 0 }, { name: 'Deposits', value: 40 }, { name: 'Treasuries', value: 40 }],
+            assets: [{ name: 'Currency', value: 0, color: 'darkgreen' },
+            { name: 'Deposits', value: 40, color: 'darkgreen' },
+            { name: 'Treasuries', value: 40, color: 'darkgreen' }],
             liabilities: [
                 {
                     name: 'Equity',
-                    value: null
+                    value: null,
+                    color: 'mediumblue'
                 }]
         }
         this.Companies = {
             name: 'Companies',
-            assets: [{ name: 'Deposits', value: 40 }],
-            liabilities: [{ name: 'Equity', value: null }]
+            assets: [{ name: 'Deposits', value: 40, color: 'darkgreen' }],
+            liabilities: [{ name: 'Equity', value: null, color: 'mediumblue' }]
         }
 
         //////////////////////////

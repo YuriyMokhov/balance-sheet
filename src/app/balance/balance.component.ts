@@ -46,6 +46,7 @@ export class BalanceComponent implements OnInit {
       totalLeftMargin: 285
     };
 
+
     //Total
     let totalSectorNested = canvas.nested();
     totalSectorNested.attr({
@@ -65,20 +66,28 @@ export class BalanceComponent implements OnInit {
 
     //Aggregate
     let aggregateSectorNested = canvas.nested();
+
     aggregateSectorNested.attr({
       id: 'aggregateSectorNested',
       width: convasSettings.aggregateSectorWidth,
       height: convasSettings.aggregateSectorHeight,
       x: convasSettings.aggregateLeftMargin,
-      y: convasSettings.totalSectorHeight + convasSettings.verticalIdentBetweenSectors
+      y: convasSettings.totalSectorHeight + convasSettings.verticalIdentBetweenSectors,
     });
     aggregateSectorNested.rect(convasSettings.aggregateSectorWidth, convasSettings.aggregateSectorHeight).attr({
       id: 'aggregateSectorNestedRect',
       x: 0,
       y: 0,
       fill: 'white',
-      stroke: '#000',
+      stroke: '#000'
+
     });
+    [this.balanceElements.FederalGovernmentSectorAggregate, this.balanceElements.PrivateSectorAggregate]
+      .forEach((balanceElement, index) => {
+        this.fillBalanceElement(balanceElement, aggregateSectorNested, 2, index);
+      });
+
+
     //Federal Government sector
     let governmentSectorBSNested = canvas.nested();
     governmentSectorBSNested.attr({
@@ -149,10 +158,14 @@ export class BalanceComponent implements OnInit {
       x: svgWidth * indexOfElements,
       y: parentSvg.height() - svgHeight
     });
+
     nestedSvg.rect(nestedSvg.width(), nestedSvg.height()).attr({
       id: `${balanceElement.name}NestedSvgRect`,
       //  stroke: 'black',
-      fill: 'white'
+      fill: 'white',
+      stroke: 'black',
+      x: 0,
+      y: 0
     });
 
     //bottom line

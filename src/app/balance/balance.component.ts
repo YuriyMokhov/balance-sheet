@@ -13,7 +13,7 @@ export class BalanceComponent implements OnInit {
   //private balanceService: BalanceService;
   private graph: Svg;
   //base elements
-  private balanceElements: BalanceElements;
+  public balanceElements: BalanceElements;
 
 
   constructor() {
@@ -38,7 +38,7 @@ export class BalanceComponent implements OnInit {
       governmentSectorBSNestedHeight: 320,
       horizontalIndentBetweenSectors: 20,
       aggregateSectorWidth: 355,
-      aggregateSectorHeight: 135,
+      aggregateSectorHeight: 150,
       aggregateLeftMargin: 190,
       totalSectorWidth: 170,
       totalSectorHeight: 100,
@@ -63,6 +63,10 @@ export class BalanceComponent implements OnInit {
       fill: 'white',
       stroke: '#000',
     });
+    [this.balanceElements.TotalEconomy]
+      .forEach((balanceElement, index) => {
+        this.fillBalanceElement(balanceElement, totalSectorNested, 1, index, 1 / 8);
+      });
 
     //Aggregate
     let aggregateSectorNested = canvas.nested();
@@ -84,7 +88,7 @@ export class BalanceComponent implements OnInit {
     });
     [this.balanceElements.FederalGovernmentSectorAggregate, this.balanceElements.PrivateSectorAggregate]
       .forEach((balanceElement, index) => {
-        this.fillBalanceElement(balanceElement, aggregateSectorNested, 2, index);
+        this.fillBalanceElement(balanceElement, aggregateSectorNested, 2, index, 1 / 4);
       });
 
 
@@ -132,7 +136,7 @@ export class BalanceComponent implements OnInit {
 
   }
 
-  fillBalanceElement(balanceElement: BalanceElement, parentSvg: Svg, countColumns: number, indexOfElements: number) {
+  fillBalanceElement(balanceElement: BalanceElement, parentSvg: Svg, countColumns: number, indexOfElements: number, scale: number = 1) {
 
     //--------params----------
 
@@ -140,7 +144,7 @@ export class BalanceComponent implements OnInit {
     //Nested svg height for BalanceElement. Need calculate
     let svgHeight = balanceElement.assets.map(asset => asset.value).reduce((sum, currentAssetValue) => {
       return sum + currentAssetValue;
-    })
+    }) * scale;
     let sumAssetsValue = svgHeight; //equal
 
     const indentTextHeight = 20;//indent for bottom text 
@@ -159,7 +163,7 @@ export class BalanceComponent implements OnInit {
       y: parentSvg.height() - svgHeight
     });
 
-    nestedSvg.rect(nestedSvg.width(), nestedSvg.height()).attr({
+    nestedSvg.rect(svgWidth, svgHeight).attr({
       id: `${balanceElement.name}NestedSvgRect`,
       //  stroke: 'black',
       fill: 'white',
@@ -204,12 +208,12 @@ export class BalanceComponent implements OnInit {
     //fill assets
     balanceElement.assets.forEach((asset, index, balanceElements) => {
       let sumPrevElementValues = balanceElements.filter((value, i) => i < index).length ?
-        balanceElements.filter((value, i) => i < index).map(x => x.value).reduce((sum, currentValue) => sum + currentValue) : 0;
+        balanceElements.filter((value, i) => i < index).map(x => x.value).reduce((sum, currentValue) => sum + currentValue) * scale : 0;
 
 
       console.log(`index ${index}: ${sumPrevElementValues}`);
       //<rect width="70" height="40" stroke="black" stroke-width="1" fill="mediumblue" x="465" y="450"></rect>
-      nestedSvg.rect(columnWidth, asset.value).attr({
+      nestedSvg.rect(columnWidth, asset.value * scale).attr({
         stroke: 'black',
         'stroke-width': 1,
         fill: asset.color,
@@ -229,12 +233,12 @@ export class BalanceComponent implements OnInit {
     //fill liabilities
     balanceElement.liabilities.forEach((liability, index, balanceElements) => {
       let sumPrevElementValues = balanceElements.filter((value, i) => i < index).length ?
-        balanceElements.filter((value, i) => i < index).map(x => x.value).reduce((sum, currentValue) => sum + currentValue) : 0;
+        balanceElements.filter((value, i) => i < index).map(x => x.value).reduce((sum, currentValue) => sum + currentValue) * scale : 0;
 
 
       console.log(`index ${index}: ${sumPrevElementValues}`);
       //<rect width="70" height="40" stroke="black" stroke-width="1" fill="mediumblue" x="465" y="450"></rect>
-      nestedSvg.rect(columnWidth, liability.value).attr({
+      nestedSvg.rect(columnWidth, liability.value * scale).attr({
         stroke: 'black',
         'stroke-width': 1,
         fill: liability.color,

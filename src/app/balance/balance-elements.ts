@@ -8,6 +8,7 @@ export class BalanceElements {
     public Companies: BalanceElement;
     public FederalGovernmentSectorAggregate: BalanceElement;
     public PrivateSectorAggregate: BalanceElement;
+    public TotalEconomy: BalanceElement;
 
     constructor() {
         //1st level
@@ -217,6 +218,41 @@ export class BalanceElements {
         this.PrivateSectorAggregate.liabilities.find(x => x.name == 'Liabilities').value =
             this.Banks.liabilities.find(x => x.name == 'Deposits').value;
         console.log(`Liabilities PrivateSectorAggregate: ${this.PrivateSectorAggregate.liabilities.find(x => x.name == 'Liabilities').value}`);
+
+
+        //3nd level
+        this.TotalEconomy = {
+            name: 'Total Economy (aggregate)',
+            assets: [
+                {
+                    name: 'Assets',
+                    color: 'darkgreen',
+                    value: null
+                }
+            ],
+            liabilities: [{
+                name: 'Liabilities',
+                color: 'darkred',
+                value: null
+            }]
+        };
+
+        //Total Economy (aggregate)
+        // Assets = Assets (Federal Government Sector) + Assets (Private Sector)
+        // Liabilities = Liabilities (Federal Government Sector) + Liabilities (Private Sector)
+
+        this.TotalEconomy.assets.find(x => x.name == 'Assets').value =
+            this.FederalGovernmentSectorAggregate.assets.find(x => x.name == 'Assets').value
+            + this.PrivateSectorAggregate.assets.find(x => x.name == 'Assets').value;
+        console.log(`Assets TotalEconomy: ${this.TotalEconomy.assets.find(x => x.name == 'Assets').value}`);
+
+
+        this.TotalEconomy.liabilities.find(x => x.name == 'Liabilities').value =
+            this.FederalGovernmentSectorAggregate.liabilities.find(x => x.name == 'Liabilities').value
+            + this.PrivateSectorAggregate.liabilities.find(x => x.name == 'Liabilities').value;
+        console.log(`Liabilities PrivateSectorAggregate: ${this.TotalEconomy.liabilities.find(x => x.name == 'Liabilities').value}`);
+
+
 
     }
 }

@@ -36,24 +36,64 @@ export class BalanceComponent implements OnInit {
       privateSectorBSNestedHeight: 320,
       governmentSectorBSNestedWidth: 355,
       governmentSectorBSNestedHeight: 320,
-      indentBetweenSectors: 20
+      horizontalIndentBetweenSectors: 20,
+      aggregateSectorWidth: 355,
+      aggregateSectorHeight: 135,
+      aggregateLeftMargin: 190,
+      totalSectorWidth: 170,
+      totalSectorHeight: 100,
+      verticalIdentBetweenSectors: 20,
+      totalLeftMargin: 285
     };
 
+    //Total
+    let totalSectorNested = canvas.nested();
+    totalSectorNested.attr({
+      id: 'totalSectorNested',
+      width: convasSettings.totalSectorWidth,
+      height: convasSettings.totalSectorHeight,
+      x: convasSettings.totalLeftMargin,
+      y: 0
+    });
+    totalSectorNested.rect(convasSettings.totalSectorWidth, convasSettings.totalSectorHeight).attr({
+      id: 'totalSectorNestedRect',
+      x: 0,
+      y: 0,
+      fill: 'white',
+      stroke: '#000',
+    });
+
+    //Aggregate
+    let aggregateSectorNested = canvas.nested();
+    aggregateSectorNested.attr({
+      id: 'aggregateSectorNested',
+      width: convasSettings.aggregateSectorWidth,
+      height: convasSettings.aggregateSectorHeight,
+      x: convasSettings.aggregateLeftMargin,
+      y: convasSettings.totalSectorHeight + convasSettings.verticalIdentBetweenSectors
+    });
+    aggregateSectorNested.rect(convasSettings.aggregateSectorWidth, convasSettings.aggregateSectorHeight).attr({
+      id: 'aggregateSectorNestedRect',
+      x: 0,
+      y: 0,
+      fill: 'white',
+      stroke: '#000',
+    });
     //Federal Government sector
     let governmentSectorBSNested = canvas.nested();
     governmentSectorBSNested.attr({
       id: 'governmentSectorBSNested',
       width: convasSettings.governmentSectorBSNestedWidth,
       height: convasSettings.governmentSectorBSNestedHeight,
-      x: convasSettings.indentBetweenSectors,
-      y: 0 //пока что
+      x: convasSettings.horizontalIndentBetweenSectors,
+      y: convasSettings.totalSectorHeight + convasSettings.verticalIdentBetweenSectors + convasSettings.aggregateSectorHeight + convasSettings.verticalIdentBetweenSectors
     });
     governmentSectorBSNested.rect(convasSettings.governmentSectorBSNestedWidth, convasSettings.governmentSectorBSNestedHeight).attr({
       id: 'governmentSectorBSNestedRect',
       x: 0,
       y: 0,
       fill: 'white',
-      // stroke: '#000',
+      stroke: '#000',
     });
     [this.balanceElements.Treasury, this.balanceElements.CentralBank].forEach((balanceElement, index) => {
       this.fillBalanceElement(balanceElement, governmentSectorBSNested, 2, index);
@@ -65,15 +105,15 @@ export class BalanceComponent implements OnInit {
       id: 'privateSectorBSNested',
       width: convasSettings.privateSectorBSNestedWidth,
       height: convasSettings.privateSectorBSNestedHeight,
-      x: convasSettings.indentBetweenSectors + convasSettings.governmentSectorBSNestedWidth + convasSettings.indentBetweenSectors,
-      y: 0 //пока что
+      x: convasSettings.horizontalIndentBetweenSectors + convasSettings.governmentSectorBSNestedWidth + convasSettings.horizontalIndentBetweenSectors,
+      y: convasSettings.totalSectorHeight + convasSettings.verticalIdentBetweenSectors + convasSettings.aggregateSectorHeight + convasSettings.verticalIdentBetweenSectors
     });
     privateSectorBSNested.rect(convasSettings.privateSectorBSNestedWidth, convasSettings.privateSectorBSNestedHeight).attr({
       id: 'privateSectorBSNestedRect',
       x: 0,
       y: 0,
       fill: 'white',
-      // stroke: '#000',
+      stroke: '#000',
     });
 
     [this.balanceElements.Banks, this.balanceElements.Households, this.balanceElements.Companies]

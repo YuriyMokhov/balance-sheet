@@ -1,6 +1,10 @@
+import { Injectable } from '@angular/core';
 import { BalanceElement } from './balance-element';
 
-export class BalanceElements {
+@Injectable({
+    providedIn: 'root'
+})
+export class BalanceElementService {
     public Treasury: BalanceElement;
     public CentralBank: BalanceElement;
     public Banks: BalanceElement;
@@ -10,14 +14,23 @@ export class BalanceElements {
     public PrivateSectorAggregate: BalanceElement;
     public TotalEconomy: BalanceElement;
 
-    constructor() {
+    resetAll() {
         this.reset1stLevel();
         this.calculate1stLevel();
         this.reset2ndLevel();
         this.calculate2ndLevel();
         this.reset3thLevel();
         this.calculate3thLevel();
+    };
 
+    recalculateAll() {
+        this.calculate1stLevel();
+        this.calculate2ndLevel();
+        this.calculate3thLevel();
+    }
+
+    constructor() {
+        this.resetAll();
     }
     get1stLevelElements(): BalanceElement[] {
         return [this.Banks, this.Households, this.Companies];

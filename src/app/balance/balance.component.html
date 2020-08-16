@@ -4,17 +4,18 @@
     <div class="control-area">
         <div class="control-area__row">
             <label class="control-area__operation-label label">Операция:</label>
-            <select class="contol-area__operation-select">
-                <option value="privatespending" selected="">Изменить частные расходы</option>
-                <option value="governmentspending">Изменить государственные расходы</option>
+            <select class="contol-area__operation-select" [(ngModel)]="selectedOperation">
+                <option *ngFor="let operation of balanceOperations" [ngValue]="operation">{{operation.text}}</option>
             </select>
+            {{selectedOperation | json}}
         </div>
         <div class="control-area__row">
             <label class="control-area__size-label label">Размер:</label>
-            <input type="text" class="contol-area__size" value="30" size="5">
+            <input type="text" class="contol-area__size" [(ngModel)]="currentValue" size="5">
         </div>
         <div class="control-area__row control-area__button-flex">
-            <button onclick="doActionClick()" class="control-area__run-button button">Запуск</button>
+            <button (click)="executeOperation(selectedOperation)"
+                class="control-area__run-button button">Запуск</button>
             <button onclick="replayActionClick()" class="control-area__replay-button button">Повторить</button>
             <button onclick="reverseActionClick()" class="control-area__reverse-button button">Откатить</button>
             <button onclick="resetBalanceSheetsClick()" class="control-area__reset-button button">Сброс</button>

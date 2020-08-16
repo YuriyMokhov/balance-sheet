@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { BalanceElement, BalanceElementAsset, BalanceElementLiabilities } from './balance-element'
-import { BalanceService } from './balance-service.service';
-import { SVG, Svg, G, Rect } from '@svgdotjs/svg.js'
-import { BalanceElements } from './balance-elements';
+import { SVG, Svg, G, Rect, Point } from '@svgdotjs/svg.js'
+import { BalanceElementService } from './balance-elements.service';
+import { BalanceOperations, IBalanceOperation } from './balance-operations';
 
 @Component({
   selector: 'app-balance',
@@ -10,37 +10,53 @@ import { BalanceElements } from './balance-elements';
   styleUrls: ['./balance.component.scss']
 })
 export class BalanceComponent implements OnInit {
-  //private balanceService: BalanceService;
-  private graph: Svg;
-  //base elements
-  public balanceElements: BalanceElements;
 
+  balanceElementService: BalanceElementService;
+  balanceOperations: IBalanceOperation[];
+  selectedOperation: IBalanceOperation;
+  currentValue: number = 30;
 
-  constructor() {
-    this.balanceElements = new BalanceElements();
-
+  executeOperation(selectedOperation: IBalanceOperation) {
+    selectedOperation.run(this.currentValue);
+    this.drawConvas();
   }
+
+  constructor(balanceElements: BalanceElementService, balanceOperations: BalanceOperations) {
+    this.balanceElementService = balanceElements;
+    this.balanceOperations = balanceOperations.getBalanceOperations();
+    this.selectedOperation = this.balanceOperations[0];
+  }
+
+
 
   ngOnInit(): void {
 
+    this.drawConvas();
+  }
+
+  drawConvas() {
 
     const convasSettings = {
       convasWidth: 1200,
-      convasHeight: 640,
+      convasHeight: 670,
       privateSectorBSNestedWidth: 620,
       privateSectorBSNestedHeight: 320,
       governmentSectorBSNestedWidth: 420,
       governmentSectorBSNestedHeight: 320,
       horizontalIndentBetweenSectors: 20,
       aggregateSectorWidth: 420,
-      aggregateSectorHeight: 170,
+      aggregateSectorHeight: 190,
       aggregateLeftMargin: 190,
       totalSectorWidth: 210,
-      totalSectorHeight: 100,
+      totalSectorHeight: 120,
       verticalIdentBetweenSectors: 20,
       totalLeftMargin: 285
     };
 
+    let svgExist: boolean = document.querySelectorAll('.convas>svg').length > 0;
+    if (svgExist) {
+      document.querySelectorAll('.convas>svg')[0].remove();
+    }
     let canvas = SVG()
       .addTo('.convas')
       .size(convasSettings.convasWidth, convasSettings.convasHeight);
@@ -61,7 +77,7 @@ export class BalanceComponent implements OnInit {
       fill: 'transparent',
       //  stroke: '#000',
     });
-    [this.balanceElements.TotalEconomy]
+    [this.balanceElementService.TotalEconomy]
       .forEach((balanceElement, index) => {
         this.fillBalanceElement(balanceElement, totalSectorNested, 1, index, 1 / 8);
       });
@@ -85,9 +101,9 @@ export class BalanceComponent implements OnInit {
 
     });
 
-    this.fillBrackets(aggregateSectorNested);
+    this.fillBrackets(aggregateSectorNested, aggregateSectorNested.width() / 2);
 
-    [this.balanceElements.FederalGovernmentSectorAggregate, this.balanceElements.PrivateSectorAggregate]
+    [this.balanceElementService.FederalGovernmentSectorAggregate, this.balanceElementService.PrivateSectorAggregate]
       .forEach((balanceElement, index) => {
         this.fillBalanceElement(balanceElement, aggregateSectorNested, 2, index, 1 / 4);
       });
@@ -111,9 +127,9 @@ export class BalanceComponent implements OnInit {
       //  stroke: '#000',
     });
 
-    this.fillBrackets(governmentSectorBSNested);
+    this.fillBrackets(governmentSectorBSNested, governmentSectorBSNested.width() * 5 / 8);
 
-    [this.balanceElements.Treasury, this.balanceElements.CentralBank].forEach((balanceElement, index) => {
+    [this.balanceElementService.Treasury, this.balanceElementService.CentralBank].forEach((balanceElement, index) => {
       this.fillBalanceElement(balanceElement, governmentSectorBSNested, 2, index);
     });
 
@@ -133,15 +149,15 @@ export class BalanceComponent implements OnInit {
       fill: 'transparent',
       //  stroke: '#000',
     });
-    this.fillBrackets(privateSectorBSNested);
+    this.fillBrackets(privateSectorBSNested, privateSectorBSNested.width() * 1 / 8);
 
-    [this.balanceElements.Banks, this.balanceElements.Households, this.balanceElements.Companies]
+    [this.balanceElementService.Banks, this.balanceElementService.Households, this.balanceElementService.Companies]
       .forEach((balanceElement, index) => {
         this.fillBalanceElement(balanceElement, privateSectorBSNested, 3, index);
       });
 
   }
-  fillBrackets(svg: Svg) {
+  fillBrackets(svg: Svg, x: number) {
     let bracketsHeight = 20;
     svg.line(0, bracketsHeight, svg.width(), bracketsHeight).attr({
       stroke: '#7a9d96',
@@ -155,7 +171,7 @@ export class BalanceComponent implements OnInit {
       stroke: '#7a9d96',
       'stroke-width': 3
     });
-    svg.line(svg.width() / 2, bracketsHeight, svg.width() / 2, 0).attr({
+    svg.line(x, bracketsHeight, x, 0).attr({
       stroke: '#7a9d96',
       'stroke-width': 3
     });
@@ -165,11 +181,13 @@ export class BalanceComponent implements OnInit {
     //--------params----------
 
     let svgWidth = parentSvg.width() / countColumns; //Nested svg width for BalanceElement.
-    //Nested svg height for BalanceElement. Need calculate
-    let svgHeight = balanceElement.assets.map(asset => asset.value).reduce((sum, currentAssetValue) => {
+
+    let sumAssetsValue = balanceElement.assets.map(asset => asset.value).reduce((sum, currentAssetValue) => {
       return sum + currentAssetValue;
-    }) * scale;
-    let sumAssetsValue = svgHeight; //equal
+    }); //equal
+    //Nested svg height for BalanceElement. Need calculate
+    let svgHeight = sumAssetsValue * scale;
+
 
     const indentTextHeight = 20;//indent for bottom text 
     svgHeight = 2 * indentTextHeight + svgHeight; //total height
@@ -213,6 +231,7 @@ export class BalanceComponent implements OnInit {
     nestedSvg.text(`$${sumAssetsValue}`).attr({
       x: svgWidth / 2,
       y: 0,
+      'font-size': 12,
       'font-style': 'italic'
     });
 
@@ -221,6 +240,7 @@ export class BalanceComponent implements OnInit {
       x: widthColumnMargin + columnWidth / 2,
       y: 0,
       fill: '#606060',
+      'font-size': 12,
       'font-style': 'italic'
     });
     // Liabilities text
@@ -228,6 +248,7 @@ export class BalanceComponent implements OnInit {
       x: widthColumnMargin + columnWidth + widthBetweenColumns + columnWidth / 2,
       y: 0,
       fill: '#606060',
+      'font-size': 12,
       'font-style': 'italic'
     });
 

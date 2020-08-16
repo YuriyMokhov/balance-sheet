@@ -26,12 +26,10 @@ $mist-color: #7a9d96;
 
       .contol-area__operation-select {
         padding: 2px;
-        border-radius: 6px;
       }
       .control-area__size-label {
       }
       .contol-area__size {
-        border-radius: 6px;
       }
 
       &.control-area__button-flex {
@@ -55,10 +53,10 @@ $mist-color: #7a9d96;
     margin-right: 5px;
   }
   .button {
-    margin-right: 5px;
+    margin-right: 10px;
     background-color: $honey-color;
     text-transform: uppercase;
-    border-radius: 6px;
+
     border: 1px solid $honey-color;
     color: white;
   }

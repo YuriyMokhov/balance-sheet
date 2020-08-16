@@ -11,6 +11,18 @@ export class BalanceElements {
     public TotalEconomy: BalanceElement;
 
     constructor() {
+        this.reset1stLevel();
+        this.calculate1stLevel();
+        this.reset2ndLevel();
+        this.calculate2ndLevel();
+        this.reset3thLevel();
+        this.calculate3thLevel();
+
+    }
+    get1stLevelElements(): BalanceElement[] {
+        return [this.Banks, this.Households, this.Companies];
+    }
+    reset1stLevel() {
         //1st level
         this.Treasury = {
             name: 'Treasury (Federal Government)',
@@ -19,13 +31,13 @@ export class BalanceElements {
                 {
                     name: 'Neg.Equity',
                     value: null,
-                    color: 'mediumblue'
+                    color: '#00303F'
                 },
-                { name: 'T.Deposits', value: 40, color: 'darkgreen' }],
+                { name: 'T.Deposits', value: 40, color: '#7A9D96' }],
             liabilities: [{
                 name: 'Treasuries',
                 value: null,
-                color: 'darkred'
+                color: '#DCAE1D'
             }]
         }
         this.CentralBank = {
@@ -33,54 +45,55 @@ export class BalanceElements {
             assets: [{
                 name: 'Treasuries',
                 value: null,
-                color: 'darkgreen'
+                color: '#7A9D96'
             }],
             liabilities: [
-                { name: 'Equity', value: 10, color: 'mediumblue' },
+                { name: 'Equity', value: 10, color: '#00303F' },
                 {
                     name: 'Currency',
                     value: null,
-                    color: 'darkred'
+                    color: '#DCAE1D'
                 }, {
                     name: 'Deposits',
                     value: null,
-                    color: 'darkred'
+                    color: '#DCAE1D'
                 }]
         }
         this.Banks = {
             name: 'Banks',
-            assets: [{ name: 'Currency', value: 40, color: 'darkgreen' }, { name: 'Reserves', value: 80, color: 'darkgreen' }],
+            assets: [{ name: 'Currency', value: 40, color: '#7A9D96' }, { name: 'Reserves', value: 80, color: '#7A9D96' }],
             liabilities: [
                 {
                     name: 'Equity',
                     value: null,
-                    color: 'mediumblue'
+                    color: '#00303F'
                 },
                 {
                     name: 'Deposits',
                     value: null,
-                    color: 'darkred'
+                    color: '#DCAE1D'
                 }]
         }
         this.Households = {
             name: 'Households',
-            assets: [{ name: 'Currency', value: 0, color: 'darkgreen' },
-            { name: 'Deposits', value: 40, color: 'darkgreen' },
-            { name: 'Treasuries', value: 40, color: 'darkgreen' }],
+            assets: [{ name: 'Currency', value: 0, color: '#7A9D96' },
+            { name: 'Deposits', value: 40, color: '#7A9D96' },
+            { name: 'Treasuries', value: 40, color: '#7A9D96' }],
             liabilities: [
                 {
                     name: 'Equity',
                     value: null,
-                    color: 'mediumblue'
+                    color: '#00303F'
                 }]
         }
         this.Companies = {
             name: 'Companies',
-            assets: [{ name: 'Deposits', value: 40, color: 'darkgreen' }],
-            liabilities: [{ name: 'Equity', value: null, color: 'mediumblue' }]
+            assets: [{ name: 'Deposits', value: 40, color: '#7A9D96' }],
+            liabilities: [{ name: 'Equity', value: null, color: '#00303F' }]
         }
+    }
 
-        //////////////////////////
+    calculate1stLevel() {
         this.Treasury.assets.find(x => x.name == 'Neg.Equity').value =
             this.CentralBank.liabilities.find(x => x.name == 'Equity').value
             + this.Banks.assets.find(x => x.name == 'Currency').value
@@ -127,25 +140,29 @@ export class BalanceElements {
 
         this.Companies.liabilities.find(x => x.name == 'Equity').value =
             this.Companies.assets.find(x => x.name == 'Deposits').value;
+    }
 
-        //2nd level
+    get2ndLevelElements(): BalanceElement[] {
+        return [this.FederalGovernmentSectorAggregate, this.PrivateSectorAggregate];
+    }
+    reset2ndLevel() {
         this.FederalGovernmentSectorAggregate = {
-            name: 'Federal Government Sector (aggregate)',
+            name: 'Federal Government (aggregate)',
             assets: [
                 {
                     name: 'Neg.Equity',
-                    color: 'mediumblue',
+                    color: '#00303F',
                     value: null
                 },
                 {
                     name: 'Assets',
-                    color: 'darkgreen',
+                    color: '#7A9D96',
                     value: null
                 }
             ],
             liabilities: [{
                 name: 'Liabilities',
-                color: 'darkred',
+                color: '#DCAE1D',
                 value: null
             }]
         };
@@ -155,23 +172,25 @@ export class BalanceElements {
             assets: [
                 {
                     name: 'Assets',
-                    color: 'darkgreen',
+                    color: '#7A9D96',
                     value: null
                 }
             ],
             liabilities: [
                 {
                     name: 'Equity',
-                    color: 'mediumblue',
+                    color: '#00303F',
                     value: null
                 }, {
                     name: 'Liabilities',
-                    color: 'darkred',
+                    color: '#DCAE1D',
                     value: null
                 }]
         };
 
+    }
 
+    calculate2ndLevel() {
         //         Federal Government Sector (aggregate)
         // Neg.Equity = Neg.Equity (Treasury) - Equity (Central Bank)
         // Assets = T.Deposits (Treasury) + Treasuries (Central Bank)
@@ -219,23 +238,32 @@ export class BalanceElements {
             this.Banks.liabilities.find(x => x.name == 'Deposits').value;
         console.log(`Liabilities PrivateSectorAggregate: ${this.PrivateSectorAggregate.liabilities.find(x => x.name == 'Liabilities').value}`);
 
+    }
 
-        //3nd level
+    get3thLevelElements(): BalanceElement[] {
+        return [this.TotalEconomy];
+    }
+
+    reset3thLevel() {
         this.TotalEconomy = {
             name: 'Total Economy (aggregate)',
             assets: [
                 {
                     name: 'Assets',
-                    color: 'darkgreen',
+                    color: '#7A9D96',
                     value: null
                 }
             ],
             liabilities: [{
                 name: 'Liabilities',
-                color: 'darkred',
+                color: '#DCAE1D',
                 value: null
             }]
         };
+
+    }
+
+    calculate3thLevel() {
 
         //Total Economy (aggregate)
         // Assets = Assets (Federal Government Sector) + Assets (Private Sector)
@@ -253,6 +281,7 @@ export class BalanceElements {
         console.log(`Liabilities PrivateSectorAggregate: ${this.TotalEconomy.liabilities.find(x => x.name == 'Liabilities').value}`);
 
 
-
     }
+
+
 }

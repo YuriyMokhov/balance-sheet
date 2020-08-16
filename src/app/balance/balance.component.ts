@@ -24,28 +24,26 @@ export class BalanceComponent implements OnInit {
   ngOnInit(): void {
 
 
-    const width = window.innerWidth - 10
-    const height = window.innerHeight - 10
-
-    let canvas = SVG()
-      .addTo('body')
-      .size(width, height);
-
     const convasSettings = {
-      privateSectorBSNestedWidth: 540,
+      convasWidth: 1200,
+      convasHeight: 640,
+      privateSectorBSNestedWidth: 620,
       privateSectorBSNestedHeight: 320,
-      governmentSectorBSNestedWidth: 355,
+      governmentSectorBSNestedWidth: 420,
       governmentSectorBSNestedHeight: 320,
       horizontalIndentBetweenSectors: 20,
-      aggregateSectorWidth: 355,
-      aggregateSectorHeight: 150,
+      aggregateSectorWidth: 420,
+      aggregateSectorHeight: 170,
       aggregateLeftMargin: 190,
-      totalSectorWidth: 170,
+      totalSectorWidth: 210,
       totalSectorHeight: 100,
       verticalIdentBetweenSectors: 20,
       totalLeftMargin: 285
     };
 
+    let canvas = SVG()
+      .addTo('.convas')
+      .size(convasSettings.convasWidth, convasSettings.convasHeight);
 
     //Total
     let totalSectorNested = canvas.nested();
@@ -60,8 +58,8 @@ export class BalanceComponent implements OnInit {
       id: 'totalSectorNestedRect',
       x: 0,
       y: 0,
-      fill: 'white',
-      stroke: '#000',
+      fill: 'transparent',
+      //  stroke: '#000',
     });
     [this.balanceElements.TotalEconomy]
       .forEach((balanceElement, index) => {
@@ -82,10 +80,13 @@ export class BalanceComponent implements OnInit {
       id: 'aggregateSectorNestedRect',
       x: 0,
       y: 0,
-      fill: 'white',
-      stroke: '#000'
+      fill: 'transparent',
+      //  stroke: '#000'
 
     });
+
+    this.fillBrackets(aggregateSectorNested);
+
     [this.balanceElements.FederalGovernmentSectorAggregate, this.balanceElements.PrivateSectorAggregate]
       .forEach((balanceElement, index) => {
         this.fillBalanceElement(balanceElement, aggregateSectorNested, 2, index, 1 / 4);
@@ -101,13 +102,17 @@ export class BalanceComponent implements OnInit {
       x: convasSettings.horizontalIndentBetweenSectors,
       y: convasSettings.totalSectorHeight + convasSettings.verticalIdentBetweenSectors + convasSettings.aggregateSectorHeight + convasSettings.verticalIdentBetweenSectors
     });
+
     governmentSectorBSNested.rect(convasSettings.governmentSectorBSNestedWidth, convasSettings.governmentSectorBSNestedHeight).attr({
       id: 'governmentSectorBSNestedRect',
       x: 0,
       y: 0,
-      fill: 'white',
-      stroke: '#000',
+      fill: 'transparent',
+      //  stroke: '#000',
     });
+
+    this.fillBrackets(governmentSectorBSNested);
+
     [this.balanceElements.Treasury, this.balanceElements.CentralBank].forEach((balanceElement, index) => {
       this.fillBalanceElement(balanceElement, governmentSectorBSNested, 2, index);
     });
@@ -125,9 +130,10 @@ export class BalanceComponent implements OnInit {
       id: 'privateSectorBSNestedRect',
       x: 0,
       y: 0,
-      fill: 'white',
-      stroke: '#000',
+      fill: 'transparent',
+      //  stroke: '#000',
     });
+    this.fillBrackets(privateSectorBSNested);
 
     [this.balanceElements.Banks, this.balanceElements.Households, this.balanceElements.Companies]
       .forEach((balanceElement, index) => {
@@ -135,7 +141,25 @@ export class BalanceComponent implements OnInit {
       });
 
   }
-
+  fillBrackets(svg: Svg) {
+    let bracketsHeight = 20;
+    svg.line(0, bracketsHeight, svg.width(), bracketsHeight).attr({
+      stroke: '#7a9d96',
+      'stroke-width': 3
+    });
+    svg.line(0, bracketsHeight, 0, bracketsHeight + bracketsHeight).attr({
+      stroke: '#7a9d96',
+      'stroke-width': 3
+    });
+    svg.line(svg.width(), bracketsHeight, svg.width(), bracketsHeight + bracketsHeight).attr({
+      stroke: '#7a9d96',
+      'stroke-width': 3
+    });
+    svg.line(svg.width() / 2, bracketsHeight, svg.width() / 2, 0).attr({
+      stroke: '#7a9d96',
+      'stroke-width': 3
+    });
+  }
   fillBalanceElement(balanceElement: BalanceElement, parentSvg: Svg, countColumns: number, indexOfElements: number, scale: number = 1) {
 
     //--------params----------
@@ -149,14 +173,14 @@ export class BalanceComponent implements OnInit {
 
     const indentTextHeight = 20;//indent for bottom text 
     svgHeight = 2 * indentTextHeight + svgHeight; //total height
-    const columnWidth = 70;
-    const widthBetweenColumns = 20;
+    const columnWidth = 90;
+    const widthBetweenColumns = 10;
     const widthColumnMargin = 10;
     //----------------------
 
     let nestedSvg = parentSvg.nested().attr({
       id: `${balanceElement.name}NestedSvg`,
-      style: 'font-size: 9px; font-weight: bold; text-anchor: middle; font-family: arial,sans-serif;',
+      style: 'font-size: 12px; font-weight: regular; text-anchor: middle; font-family: "Open Sans",sans-serif;',
       width: svgWidth,
       height: svgHeight,
       x: svgWidth * indexOfElements,
@@ -166,8 +190,9 @@ export class BalanceComponent implements OnInit {
     nestedSvg.rect(svgWidth, svgHeight).attr({
       id: `${balanceElement.name}NestedSvgRect`,
       //  stroke: 'black',
-      fill: 'white',
-      stroke: 'black',
+      fill: 'transparent',
+      //  stroke: 'black',
+
       x: 0,
       y: 0
     });
@@ -187,7 +212,8 @@ export class BalanceComponent implements OnInit {
     //total result
     nestedSvg.text(`$${sumAssetsValue}`).attr({
       x: svgWidth / 2,
-      y: 0
+      y: 0,
+      'font-style': 'italic'
     });
 
     //Assets text
@@ -223,7 +249,7 @@ export class BalanceComponent implements OnInit {
       //<text style="fill: white;" x="500" y="460" visibility="true">Equity $40</text>
       nestedSvg.text(`${asset.name} $${asset.value}`).attr({
         x: widthColumnMargin + columnWidth / 2,
-        y: sumPrevElementValues + indentTextHeight,
+        y: sumPrevElementValues + indentTextHeight - 5,
         fill: 'white',
         visibility: true
       });
@@ -248,7 +274,7 @@ export class BalanceComponent implements OnInit {
       //<text style="fill: white;" x="500" y="460" visibility="true">Equity $40</text>
       nestedSvg.text(`${liability.name} $${liability.value}`).attr({
         x: widthColumnMargin + columnWidth + widthBetweenColumns + columnWidth / 2,
-        y: sumPrevElementValues + indentTextHeight,
+        y: sumPrevElementValues + indentTextHeight - 5,
         fill: 'white',
         visibility: true
       });

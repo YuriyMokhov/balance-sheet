@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BalanceElement, BalanceElementAsset, BalanceElementLiabilities } from './balance-element'
 import { SVG, Svg, G, Rect, Point } from '@svgdotjs/svg.js'
 import { BalanceElementService } from './balance-elements.service';
-import { BalanceOperations, IBalanceOperation } from './balance-operations';
+import { BalanceOperations, BalanceOperationBase } from './balance-operations';
 
 @Component({
   selector: 'app-balance',
@@ -12,12 +12,26 @@ import { BalanceOperations, IBalanceOperation } from './balance-operations';
 export class BalanceComponent implements OnInit {
 
   balanceElementService: BalanceElementService;
-  balanceOperations: IBalanceOperation[];
-  selectedOperation: IBalanceOperation;
+  balanceOperations: BalanceOperationBase[];
+  selectedOperation: BalanceOperationBase;
   currentValue: number = 30;
 
-  executeOperation(selectedOperation: IBalanceOperation) {
+  executeOperation(selectedOperation: BalanceOperationBase) {
     selectedOperation.run(this.currentValue);
+    this.drawConvas();
+  }
+
+  replayOperation(selectedOperation: BalanceOperationBase) {
+    selectedOperation.replay(this.currentValue);
+    this.drawConvas();
+  }
+
+  reverseOperation(selectedOperation: BalanceOperationBase) {
+    selectedOperation.reverse(this.currentValue);
+    this.drawConvas();
+  }
+  resetAllOperations(selectedOperation: BalanceOperationBase) {
+    selectedOperation.reset();
     this.drawConvas();
   }
 

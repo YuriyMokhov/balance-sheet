@@ -3,59 +3,72 @@ import { BalanceElementService } from './balance-elements.service';
 import { Injectable } from '@angular/core';
 
 
-
-export interface IBalanceOperation {
+interface IBalanceOperation {
     value: string,
     text: string,
-    run: (value: number) => void,
-    replay: (value: number) => void,
-    reverse: (value: number) => void,
-    reset: () => void
+    run(value: number): void,
+    replay(value: number): void,
+    reverse(value: number): void,
+    reset(): void
 };
 
-
-export class PrivateSpending implements IBalanceOperation {
+export abstract class BalanceOperationBase implements IBalanceOperation {
     balanceElementService: BalanceElementService;
-
     constructor(balanceElementService: BalanceElementService) {
         this.balanceElementService = balanceElementService;
 
     }
-
-    value: string = 'privatespending';
-    text: string = 'Изменить частные расходы';
-
-    run(value: number) {
-        this.balanceElementService.Households.assets.find(x => x.name == 'Deposits').value += value;
-        this.balanceElementService.Companies.assets.find(x => x.name == 'Deposits').value += value;
-        this.balanceElementService.recalculateAll();
-    }
-
-    replay(value: number) {
-        // this.balanceElementService.Households.assets.find(x => x.name == 'Deposits').value -= value;
-        // this.balanceElementService.Companies.assets.find(x => x.name == 'Deposits').value -= value;
-        // this.balanceElementService.recalculateAll();
-    };
-
-    reverse(value: number) {
-        this.balanceElementService.Households.assets.find(x => x.name == 'Deposits').value -= value;
-        this.balanceElementService.Companies.assets.find(x => x.name == 'Deposits').value -= value;
-        this.balanceElementService.recalculateAll();
-    };
+    abstract value: string;
+    abstract text: string;
+    abstract run(value: number): void;
+    abstract replay(value: number): void;
+    abstract reverse(value: number): void;
     reset() {
         this.balanceElementService.resetAll();
     };
 
 
 }
-
-
-export class GovernmentSpending implements IBalanceOperation {
+export class PrivateSpending extends BalanceOperationBase {
     balanceElementService: BalanceElementService;
 
     constructor(balanceElementService: BalanceElementService) {
+        super(balanceElementService);
         this.balanceElementService = balanceElementService;
 
+
+    }
+
+    value: string = 'privatespending';
+    text: string = 'Изменить частные расходы';
+
+
+    run(value: number): void {
+        this.balanceElementService.Households.assets.find(x => x.name == 'Deposits').value -= value;
+        this.balanceElementService.Companies.assets.find(x => x.name == 'Deposits').value += value;
+        this.balanceElementService.recalculateAll();
+    }
+
+    replay(value: number) {
+        this.reverse(value);
+        this.run(value);
+    };
+
+    reverse(value: number) {
+        this.balanceElementService.Households.assets.find(x => x.name == 'Deposits').value += value;
+        this.balanceElementService.Companies.assets.find(x => x.name == 'Deposits').value -= value;
+        this.balanceElementService.recalculateAll();
+    };
+
+}
+
+
+export class GovernmentSpending extends BalanceOperationBase {
+    balanceElementService: BalanceElementService;
+
+    constructor(balanceElementService: BalanceElementService) {
+        super(balanceElementService);
+        this.balanceElementService = balanceElementService;
     }
 
     value: string = 'governmentspending';
@@ -78,10 +91,6 @@ export class GovernmentSpending implements IBalanceOperation {
         this.balanceElementService.Companies.assets.find(x => x.name == 'Deposit').value -= value;
         this.balanceElementService.recalculateAll();
     };
-    reset() {
-        this.balanceElementService.resetAll();
-    };
-
 
 }
 
@@ -95,7 +104,7 @@ export class BalanceOperations {
         this.balanceElementService = balanceElementService;
     }
 
-    getBalanceOperations(): IBalanceOperation[] {
+    getBalanceOperations(): BalanceOperationBase[] {
         return [new PrivateSpending(this.balanceElementService), new GovernmentSpending(this.balanceElementService)];
     }
 

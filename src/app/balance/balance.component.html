@@ -16,9 +16,12 @@
         <div class="control-area__row control-area__button-flex">
             <button (click)="executeOperation(selectedOperation)"
                 class="control-area__run-button button">Запуск</button>
-            <button onclick="replayActionClick()" class="control-area__replay-button button">Повторить</button>
-            <button onclick="reverseActionClick()" class="control-area__reverse-button button">Откатить</button>
-            <button onclick="resetBalanceSheetsClick()" class="control-area__reset-button button">Сброс</button>
+            <button (click)="replayOperation(selectedOperation)"
+                class="control-area__replay-button button">Повторить</button>
+            <button (click)="reverseOperation(selectedOperation)"
+                class="control-area__reverse-button button">Откатить</button>
+            <button (click)="resetAllOperations(selectedOperation)"
+                class="control-area__reset-button button">Сброс</button>
         </div>
     </div>
 </div>

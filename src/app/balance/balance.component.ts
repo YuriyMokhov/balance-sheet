@@ -3,11 +3,20 @@ import { BalanceElement, BalanceElementAsset, BalanceElementLiabilities } from '
 import { SVG, Svg, G, Rect, Point } from '@svgdotjs/svg.js'
 import { BalanceElementService } from './balance-elements.service';
 import { BalanceOperations, BalanceOperationBase } from './balance-operations';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+  keyframes
+} from '@angular/animations';
 
 @Component({
   selector: 'app-balance',
   templateUrl: './balance.component.html',
-  styleUrls: ['./balance.component.scss']
+  styleUrls: ['./balance.component.scss'],
+
 })
 export class BalanceComponent implements OnInit {
 
@@ -15,10 +24,13 @@ export class BalanceComponent implements OnInit {
   balanceOperations: BalanceOperationBase[];
   selectedOperation: BalanceOperationBase;
   currentValue: number = 30;
-
+  getValue(balanceElementName, assetName) {
+    return this.balanceElementService[balanceElementName].assets.find(x => x.name == assetName).value;
+  }
   executeOperation(selectedOperation: BalanceOperationBase) {
     selectedOperation.run(this.currentValue);
-    this.drawConvas();
+    this.state = 'expanded';
+    //  this.drawConvas();
   }
 
   replayOperation(selectedOperation: BalanceOperationBase) {
@@ -45,15 +57,132 @@ export class BalanceComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.drawConvas();
+    //this.drawConvas();
   }
 
+
+  initConvas() {
+    const convasSettings = {
+      convasWidth: 1200,
+      convasHeight: 670,
+      privateSectorBSNestedWidth: 630,
+      privateSectorBSNestedHeight: 320,
+      governmentSectorBSNestedWidth: 420,
+      governmentSectorBSNestedHeight: 320,
+      horizontalIndentBetweenSectors: 20,
+      aggregateSectorWidth: 420,
+      aggregateSectorHeight: 190,
+      aggregateLeftMargin: 190,
+      totalSectorWidth: 210,
+      totalSectorHeight: 120,
+      verticalIdentBetweenSectors: 20,
+      totalLeftMargin: 285
+    };
+
+    let canvas = SVG()
+      .addTo('.convas')
+      .size(convasSettings.convasWidth, convasSettings.convasHeight);
+
+    //Total
+    let totalSectorNested = canvas.nested();
+    totalSectorNested.attr({
+      id: 'totalSectorNested',
+      width: convasSettings.totalSectorWidth,
+      height: convasSettings.totalSectorHeight,
+      x: convasSettings.totalLeftMargin,
+      y: 0
+    });
+    totalSectorNested.rect(convasSettings.totalSectorWidth, convasSettings.totalSectorHeight).attr({
+      id: 'totalSectorNestedRect',
+      x: 0,
+      y: 0,
+      fill: 'transparent',
+      //  stroke: '#000',
+    });
+
+
+    //Aggregate
+    let aggregateSectorNested = canvas.nested();
+
+    aggregateSectorNested.attr({
+      id: 'aggregateSectorNested',
+      width: convasSettings.aggregateSectorWidth,
+      height: convasSettings.aggregateSectorHeight,
+      x: convasSettings.aggregateLeftMargin,
+      y: convasSettings.totalSectorHeight + convasSettings.verticalIdentBetweenSectors,
+    });
+    aggregateSectorNested.rect(convasSettings.aggregateSectorWidth, convasSettings.aggregateSectorHeight).attr({
+      id: 'aggregateSectorNestedRect',
+      x: 0,
+      y: 0,
+      fill: 'transparent',
+      //  stroke: '#000'
+
+    });
+
+    this.fillBrackets(aggregateSectorNested, aggregateSectorNested.width() / 2);
+
+
+    //Federal Government sector
+    let governmentSectorBSNested = canvas.nested();
+    governmentSectorBSNested.attr({
+      id: 'governmentSectorBSNested',
+      width: convasSettings.governmentSectorBSNestedWidth,
+      height: convasSettings.governmentSectorBSNestedHeight,
+      x: convasSettings.horizontalIndentBetweenSectors,
+      y: convasSettings.totalSectorHeight + convasSettings.verticalIdentBetweenSectors + convasSettings.aggregateSectorHeight + convasSettings.verticalIdentBetweenSectors
+    });
+
+    governmentSectorBSNested.rect(convasSettings.governmentSectorBSNestedWidth, convasSettings.governmentSectorBSNestedHeight).attr({
+      id: 'governmentSectorBSNestedRect',
+      x: 0,
+      y: 0,
+      fill: 'transparent',
+      //  stroke: '#000',
+    });
+
+    this.fillBrackets(governmentSectorBSNested, governmentSectorBSNested.width() * 5 / 8);
+
+    //Private Sector
+    let privateSectorBSNested = canvas.nested();
+    privateSectorBSNested.attr({
+      id: 'privateSectorBSNested',
+      width: convasSettings.privateSectorBSNestedWidth,
+      height: convasSettings.privateSectorBSNestedHeight,
+      x: convasSettings.horizontalIndentBetweenSectors + convasSettings.governmentSectorBSNestedWidth + convasSettings.horizontalIndentBetweenSectors,
+      y: convasSettings.totalSectorHeight + convasSettings.verticalIdentBetweenSectors + convasSettings.aggregateSectorHeight + convasSettings.verticalIdentBetweenSectors
+    });
+    privateSectorBSNested.rect(convasSettings.privateSectorBSNestedWidth, convasSettings.privateSectorBSNestedHeight).attr({
+      id: 'privateSectorBSNestedRect',
+      x: 0,
+      y: 0,
+      fill: 'transparent',
+      //  stroke: '#000',
+    });
+    this.fillBrackets(privateSectorBSNested, privateSectorBSNested.width() * 1 / 8);
+
+
+  }
+
+  // updateConvas() {
+  //   let svgExist: boolean = document.querySelectorAll('.convas>svg').length > 0;
+  //   if (!svgExist) {
+  //     console.error("Convas wasn't found");
+  //   }
+  //   let canvas = SVG('.convas>svg');
+
+  //   // [this.balanceElementService.Banks, this.balanceElementService.Households, this.balanceElementService.Companies]
+  //   // .forEach((balanceElement, index) => {
+  //   //   this.fillBalanceElement(balanceElement, privateSectorBSNested, 3, index);
+  //   // });
+
+  // }
   drawConvas() {
 
     const convasSettings = {
       convasWidth: 1200,
       convasHeight: 670,
-      privateSectorBSNestedWidth: 620,
+      privateSectorBSNestedWidth: 630,
       privateSectorBSNestedHeight: 320,
       governmentSectorBSNestedWidth: 420,
       governmentSectorBSNestedHeight: 320,
@@ -190,6 +319,8 @@ export class BalanceComponent implements OnInit {
       'stroke-width': 3
     });
   }
+
+  //element from two color columns
   fillBalanceElement(balanceElement: BalanceElement, parentSvg: Svg, countColumns: number, indexOfElements: number, scale: number = 1) {
 
     //--------params----------

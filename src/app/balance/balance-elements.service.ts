@@ -14,6 +14,12 @@ export class BalanceElementService {
     public PrivateSectorAggregate: BalanceElement;
     public TotalEconomy: BalanceElement;
 
+
+
+    constructor() {
+        this.resetAll();
+    }
+
     resetAll() {
         this.reset1stLevel();
         this.calculate1stLevel();
@@ -29,15 +35,13 @@ export class BalanceElementService {
         this.calculate3thLevel();
     }
 
-    constructor() {
-        this.resetAll();
-    }
     get1stLevelElements(): BalanceElement[] {
         return [this.Banks, this.Households, this.Companies];
     }
     reset1stLevel() {
         //1st level
         this.Treasury = {
+            id: 'treasury',
             name: 'Treasury (Federal Government)',
 
             assets: [
@@ -54,6 +58,7 @@ export class BalanceElementService {
             }]
         }
         this.CentralBank = {
+            id: 'centralBank',
             name: 'Central Bank (Federal Government)',
             assets: [{
                 name: 'Treasuries',
@@ -61,7 +66,9 @@ export class BalanceElementService {
                 color: '#7A9D96'
             }],
             liabilities: [
-                { name: 'Equity', value: 10, color: '#00303F' },
+                {
+                    name: 'Equity', value: 10, color: '#00303F'
+                },
                 {
                     name: 'Currency',
                     value: null,
@@ -73,6 +80,7 @@ export class BalanceElementService {
                 }]
         }
         this.Banks = {
+            id: 'banks',
             name: 'Banks',
             assets: [{ name: 'Currency', value: 40, color: '#7A9D96' }, { name: 'Reserves', value: 80, color: '#7A9D96' }],
             liabilities: [
@@ -88,6 +96,7 @@ export class BalanceElementService {
                 }]
         }
         this.Households = {
+            id: 'households',
             name: 'Households',
             assets: [{ name: 'Currency', value: 0, color: '#7A9D96' },
             { name: 'Deposits', value: 40, color: '#7A9D96' },
@@ -100,6 +109,7 @@ export class BalanceElementService {
                 }]
         }
         this.Companies = {
+            id: 'companies',
             name: 'Companies',
             assets: [{ name: 'Deposits', value: 40, color: '#7A9D96' }],
             liabilities: [{ name: 'Equity', value: null, color: '#00303F' }]
@@ -160,6 +170,7 @@ export class BalanceElementService {
     }
     reset2ndLevel() {
         this.FederalGovernmentSectorAggregate = {
+            id: 'federalGovernment',
             name: 'Federal Government (aggregate)',
             assets: [
                 {
@@ -181,6 +192,7 @@ export class BalanceElementService {
         };
 
         this.PrivateSectorAggregate = {
+            id: 'privateSector',
             name: 'Private Sector (aggregate)',
             assets: [
                 {
@@ -259,6 +271,7 @@ export class BalanceElementService {
 
     reset3thLevel() {
         this.TotalEconomy = {
+            id: 'totalEconomy',
             name: 'Total Economy (aggregate)',
             assets: [
                 {

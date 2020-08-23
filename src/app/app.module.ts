@@ -6,8 +6,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BalanceComponent } from './balance/balance.component';
-import { BalanceElementService } from './balance/balance-elements.service';
-import { BalanceOperations } from './balance/balance-operations'
 
 @NgModule({
   declarations: [

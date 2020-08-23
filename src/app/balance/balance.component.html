@@ -1,22 +1,16 @@
-<svg width="400" height="110">
-    <rect width="100" [attr.height]="getValue('Companies','Deposits')"
-        style="fill:rgb(0,0,255);stroke-width:3;stroke:rgb(0,0,0)" />
-    Sorry, your browser does not support inline SVG.
-</svg>
-
-
 <div class="content">
-    <div class="convas">
+    <div class="canvas">
 
     </div>
     <hr />
     <div class="control-area">
         <div class="control-area__row">
             <label class="control-area__operation-label label">Операция:</label>
-            <select class="contol-area__operation-select" [(ngModel)]="selectedOperation">
+            <select class="contol-area__operation-select" [(ngModel)]="selectedOperation"
+                (change)="selectedOperationChange()">
                 <option *ngFor="let operation of balanceOperations" [ngValue]="operation">{{operation.text}}</option>
             </select>
-            {{selectedOperation | json}}
+            <!-- {{selectedOperation | json}} -->
         </div>
         <div class="control-area__row">
             <label class="control-area__size-label label">Размер:</label>
@@ -25,7 +19,7 @@
         <div class="control-area__row control-area__button-flex">
             <button (click)="executeOperation(selectedOperation)"
                 class="control-area__run-button button">Запуск</button>
-            <button (click)="replayOperation(selectedOperation)"
+            <button (click)="replayOperation(selectedOperation)" [disabled]="!this.replayButtonEnabled"
                 class="control-area__replay-button button">Повторить</button>
             <button (click)="reverseOperation(selectedOperation)"
                 class="control-area__reverse-button button">Откатить</button>

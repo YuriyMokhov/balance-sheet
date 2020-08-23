@@ -5,6 +5,10 @@ $honey-color: #dcae1d;
 $cerulean-color: #00303f;
 $mist-color: #7a9d96;
 
+rect {
+  transition: all 3700ms ease-in-out;
+}
+
 .content {
   width: 100%;
   height: 100%;
@@ -59,5 +63,10 @@ $mist-color: #7a9d96;
 
     border: 1px solid $honey-color;
     color: white;
+
+    &:disabled,
+    &[disabled] {
+      opacity: 0.5;
+    }
   }
 }

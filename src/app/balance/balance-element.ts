@@ -1,19 +1,20 @@
 
 export interface BalanceElement {
-    name: string;
+    name: string,
+    id: string,
     assets: BalanceElementAsset[],
     liabilities: BalanceElementLiabilities[]
 
 }
 
 export interface BalanceElementAsset {
-    name: string;
+    name: string,
     value: number,
     color: string
 }
 
 export interface BalanceElementLiabilities {
-    name: string;
+    name: string,
     value: number,
     color: string
 }

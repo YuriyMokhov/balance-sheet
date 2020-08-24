@@ -16,7 +16,9 @@ export class BalanceOperationService {
     getBalanceOperations(): BalanceOperationBase[] {
         return [new PrivateSpending(this.balanceElementService),
         new GovernmentSpending(this.balanceElementService),
-        new GovernmentTaxes(this.balanceElementService)];
+        new GovernmentTaxes(this.balanceElementService),
+        new GovernmentDebtIssuance(this.balanceElementService),
+        new ConsolidatedGovernmentSpending(this.balanceElementService)];
     }
 
 }
@@ -101,6 +103,60 @@ export class GovernmentTaxes extends BalanceOperationBase {
         this.balanceElementService.Treasury.assets.find(x => x.name == 'T.Deposits').value -= value;
         this.balanceElementService.Banks.assets.find(x => x.name == 'Reserves').value += value;
         this.balanceElementService.Households.assets.find(x => x.name == 'Deposits').value += value;
+        this.balanceElementService.recalculateAll();
+    };
+
+}
+
+
+export class GovernmentDebtIssuance extends BalanceOperationBase {
+    balanceElementService: BalanceElementService;
+
+    constructor(balanceElementService: BalanceElementService) {
+        super(balanceElementService);
+        this.balanceElementService = balanceElementService;
+    }
+
+    value: string = 'governmentdebtissuance';
+    text: string = 'Выпустить государственные займы';
+
+    run(value: number) {
+        this.balanceElementService.Treasury.assets.find(x => x.name == 'T.Deposits').value += value;
+        this.balanceElementService.Banks.assets.find(x => x.name == 'Reserves').value -= value;
+        this.balanceElementService.Households.assets.find(x => x.name == 'Deposits').value -= value;
+        this.balanceElementService.Households.assets.find(x => x.name == 'Treasuries').value += value;
+        this.balanceElementService.recalculateAll();
+    }
+
+    reverse(value: number) {
+        this.balanceElementService.Treasury.assets.find(x => x.name == 'T.Deposits').value -= value;
+        this.balanceElementService.Banks.assets.find(x => x.name == 'Reserves').value += value;
+        this.balanceElementService.Households.assets.find(x => x.name == 'Deposits').value += value;
+        this.balanceElementService.Households.assets.find(x => x.name == 'Treasuries').value -= value;
+        this.balanceElementService.recalculateAll();
+    };
+
+}
+
+//consolidatedgovernmentspending
+export class ConsolidatedGovernmentSpending extends BalanceOperationBase {
+    balanceElementService: BalanceElementService;
+
+    constructor(balanceElementService: BalanceElementService) {
+        super(balanceElementService);
+        this.balanceElementService = balanceElementService;
+    }
+
+    value: string = 'consolidatedgovernmentspending';
+    text: string = 'Увеличить траты государства (консолидировано)';
+
+    run(value: number) {
+        this.balanceElementService.Households.assets.find(x => x.name == 'Treasuries').value += value;
+        this.balanceElementService.recalculateAll();
+    }
+
+    reverse(value: number) {
+        this.balanceElementService.Households.assets.find(x => x.name == 'Treasuries').value -= value;
         this.balanceElementService.recalculateAll();
     };
 

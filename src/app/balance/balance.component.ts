@@ -13,18 +13,25 @@ import { BalanceOperationBase } from './balance-operation'
 })
 export class BalanceComponent implements OnInit {
 
-  balanceElementService: BalanceElementService;
-  balanceOperations: BalanceOperationBase[];
-  selectedOperation: BalanceOperationBase;
-  currentValue: number = 30;
-  replayButtonEnabled: boolean = false;
-  isValid: boolean = true;
+  private readonly balanceElementService: BalanceElementService;
+  public readonly balanceOperations: BalanceOperationBase[];
+  public selectedOperation: BalanceOperationBase;
+  public currentValue: number;
+  public replayButtonEnabled: boolean;
+  public isValid: boolean;
 
 
   constructor(balanceElements: BalanceElementService, balanceOperationService: BalanceOperationService) {
     this.balanceElementService = balanceElements;
     this.balanceOperations = balanceOperationService.getBalanceOperations();
     this.selectedOperation = this.balanceOperations[0];
+    this.resetDefaultValues();
+  }
+
+  private resetDefaultValues() {
+    this.currentValue = 30;
+    this.replayButtonEnabled = false;
+    this.isValid = true;
   }
 
 
@@ -45,13 +52,9 @@ export class BalanceComponent implements OnInit {
       this.replayButtonEnabled = true;
     }
     else {
-      console.warn('Operation isn\'t valid. Rollback!');
+      console.warn('Execute operation isn\'t valid. Rollback!');
       selectedOperation.reverse(this.currentValue); //rollback model
-      setTimeout(function () {
-        let errorBlockEl: HTMLElement = document.querySelector('.control-area__error-block') as HTMLElement;
-        errorBlockEl.scrollIntoView({ behavior: "smooth" });
-      }, 10);
-
+      this.scrollToErrorBlock();
     }
 
   }
@@ -73,19 +76,34 @@ export class BalanceComponent implements OnInit {
 
   reverseOperation(selectedOperation: BalanceOperationBase) {
     selectedOperation.reverse(this.currentValue);
-    this.updateConvas({ duration: 1500, ease: 'ease-in-out' });
-    this.replayButtonEnabled = false;
+    this.isValid = this.balanceElementService.validateBalanceElements();
+    if (this.isValid) {
+      this.updateConvas({ duration: 1500, ease: 'ease-in-out' });
+      this.replayButtonEnabled = false;
+    }
+    else {
+      console.warn('Reverse operation isn\'t valid. Rollback!');
+      selectedOperation.run(this.currentValue); //rollback model
+      this.scrollToErrorBlock();
+    }
+
   }
 
   resetAllOperations(selectedOperation: BalanceOperationBase) {
     selectedOperation.reset();
     this.updateConvas();
-    this.replayButtonEnabled = false;
+    this.resetDefaultValues();
   }
   selectedOperationChange() {
     this.replayButtonEnabled = false;
   }
 
+  private scrollToErrorBlock() {
+    setTimeout(function () {
+      let errorBlockEl: HTMLElement = document.querySelector('.control-area__error-block') as HTMLElement;
+      errorBlockEl.scrollIntoView({ behavior: "smooth" });
+    }, 10);
+  }
   initCanvas(): Svg {
     const canvasSettings = {
       canvasWidth: 1200,

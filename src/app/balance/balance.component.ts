@@ -18,6 +18,7 @@ export class BalanceComponent implements OnInit {
   selectedOperation: BalanceOperationBase;
   currentValue: number = 30;
   replayButtonEnabled: boolean = false;
+  isValid: boolean = true;
 
 
   constructor(balanceElements: BalanceElementService, balanceOperationService: BalanceOperationService) {
@@ -35,10 +36,24 @@ export class BalanceComponent implements OnInit {
 
   }
 
+
   executeOperation(selectedOperation: BalanceOperationBase) {
     selectedOperation.run(this.currentValue);
-    this.updateConvas({ duration: 1500, ease: 'ease-in-out' });
-    this.replayButtonEnabled = true;
+    this.isValid = this.balanceElementService.validateBalanceElements();
+    if (this.isValid) {
+      this.updateConvas({ duration: 1500, ease: 'ease-in-out' });
+      this.replayButtonEnabled = true;
+    }
+    else {
+      console.warn('Operation isn\'t valid. Rollback!');
+      selectedOperation.reverse(this.currentValue); //rollback model
+      setTimeout(function () {
+        let errorBlockEl: HTMLElement = document.querySelector('.control-area__error-block') as HTMLElement;
+        errorBlockEl.scrollIntoView({ behavior: "smooth" });
+      }, 10);
+
+    }
+
   }
 
   replayOperation(selectedOperation: BalanceOperationBase) {

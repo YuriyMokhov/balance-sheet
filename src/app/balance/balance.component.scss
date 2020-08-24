@@ -4,6 +4,7 @@ $morning-sky-color: #cae4db;
 $honey-color: #dcae1d;
 $cerulean-color: #00303f;
 $mist-color: #7a9d96;
+$red-color: #fa5210;
 
 rect {
   transition: all 3700ms ease-in-out;
@@ -16,6 +17,7 @@ rect {
   //  background-color: #cae4db;
   font-family: $font-family;
   font-size: 12px;
+  //background-color: rgb(248 248 248);
   .convas {
     // border: 1px solid red;
   }
@@ -34,6 +36,7 @@ rect {
       .control-area__size-label {
       }
       .contol-area__size {
+        max-width: 80px;
       }
 
       &.control-area__button-flex {
@@ -46,6 +49,12 @@ rect {
         }
         .control-area__reset-button {
         }
+      }
+
+      &.control-area__error-block {
+        margin: 10px 0;
+        color: $red-color;
+        font-size: 14px;
       }
     }
   }

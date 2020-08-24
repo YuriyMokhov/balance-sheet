@@ -94,7 +94,6 @@ export class GovernmentTaxes extends BalanceOperationBase {
         this.balanceElementService.Treasury.assets.find(x => x.name == 'T.Deposits').value += value;
         this.balanceElementService.Banks.assets.find(x => x.name == 'Reserves').value -= value;
         this.balanceElementService.Households.assets.find(x => x.name == 'Deposits').value -= value;
-
         this.balanceElementService.recalculateAll();
     }
 

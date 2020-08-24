@@ -116,6 +116,22 @@ export class BalanceElementService {
         }
     }
 
+    private validateAssetsMoreNull(balanceElement: BalanceElement): boolean {
+        return balanceElement.assets.map((a) => a.value >= 0).reduce((prevBool, currentBool) => prevBool && currentBool);
+    }
+    private validateLiabilitiesMoreNull(balanceElement: BalanceElement): boolean {
+        return balanceElement.liabilities.map((a) => a.value >= 0).reduce((prevBool, currentBool) => prevBool && currentBool);
+    }
+
+    validateBalanceElements(): boolean {
+        let companiesMoreNull = this.validateAssetsMoreNull(this.Companies) && this.validateLiabilitiesMoreNull(this.Companies);
+        let householdsMoreNull = this.validateAssetsMoreNull(this.Households) && this.validateLiabilitiesMoreNull(this.Households);
+        let banksMoreNull = this.validateAssetsMoreNull(this.Banks) && this.validateLiabilitiesMoreNull(this.Banks);
+        let cbMoreNull = this.validateAssetsMoreNull(this.CentralBank) && this.validateLiabilitiesMoreNull(this.CentralBank);
+        let tresuaryMoreNull = this.validateAssetsMoreNull(this.Treasury) && this.validateLiabilitiesMoreNull(this.Treasury);
+        return companiesMoreNull && householdsMoreNull && banksMoreNull && cbMoreNull && tresuaryMoreNull;
+
+    }
     calculate1stLevel() {
         this.Treasury.assets.find(x => x.name == 'Neg.Equity').value =
             this.CentralBank.liabilities.find(x => x.name == 'Equity').value

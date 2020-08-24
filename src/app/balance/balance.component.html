@@ -14,7 +14,7 @@
         </div>
         <div class="control-area__row">
             <label class="control-area__size-label label">Размер:</label>
-            <input type="text" class="contol-area__size" [(ngModel)]="currentValue" size="5">
+            <input type="number" class="contol-area__size" [(ngModel)]="currentValue" size="5">
         </div>
         <div class="control-area__row control-area__button-flex">
             <button (click)="executeOperation(selectedOperation)"
@@ -25,6 +25,10 @@
                 class="control-area__reverse-button button">Откатить</button>
             <button (click)="resetAllOperations(selectedOperation)"
                 class="control-area__reset-button button">Сброс</button>
+        </div>
+        <div class="control-area__row control-area__error-block" [hidden]="isValid">
+            <b>Недействительная операция</b>: на одном или нескольких балансах недостаточно активов
+            или обязательств. Сначала попробуйте выполнить другую операцию или сбросьте балансы.
         </div>
     </div>
 </div>
